@@ -3,8 +3,10 @@ import models
 from database import engine, SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
+import auth
 
 app= FastAPI()
+app.include_router(auth.router)
 models.Base.metadata.create_all(bind=engine)
 
 def get_db():
