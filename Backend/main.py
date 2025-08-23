@@ -4,10 +4,12 @@ from database import engine, SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from auth import get_current_user
+from paper_routes import paper_router
 import auth
 
 app= FastAPI()
 app.include_router(auth.router)
+app.include_router(paper_router)
 models.Base.metadata.create_all(bind=engine)
 
 def get_db():
