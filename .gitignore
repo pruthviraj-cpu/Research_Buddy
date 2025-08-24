@@ -2,3 +2,4 @@ venv/
 Backend/venv/
 __pycache__/
 *.db
+Backend/uploads/

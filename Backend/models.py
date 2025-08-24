@@ -9,6 +9,13 @@ class Users(Base):
     username = Column(String, unique=True, index=True)  
     hashed_password = Column(String)
 
+class Admins(Base):
+    __tablename__ = "admins"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)  
+    hashed_password = Column(String)
+
 class research_papers(Base):
     __tablename__= "research_papers"
     paper_id=Column(Integer,primary_key=True)

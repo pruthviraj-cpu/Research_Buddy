@@ -29,7 +29,7 @@ async def add_paper(
     pdf_url: Optional[UploadFile] = File(None)
 ):
     # Save uploaded pdf to disk
-    upload_dir = "C:/Users/hp/Desktop/AI_RPMS/uploads" # Enter your PC path
+    upload_dir = "C:\\Users\\gawan\\OneDrive\\Desktop\\DBMSProject\\backend\\uploads" # Enter your PC path
     pdf_path = f"{upload_dir}/{pdf_url.filename}"
 
     with open(pdf_path, "wb") as buffer:
