@@ -2,4 +2,14 @@ venv/
 Backend/venv/
 __pycache__/
 *.db
+<<<<<<< HEAD
 Backend/uploads/
+=======
+Frontend/node_modules/
+.DS_Store
+*.log
+.env
+*.sqlite3
+*.pyc
+.idea/
+>>>>>>> development
