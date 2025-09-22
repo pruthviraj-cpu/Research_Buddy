@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Depends, status, HTTPException, File, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Depends,status,HTTPException, File, UploadFile
 import models
 from database import engine, SessionLocal
 from typing import Annotated
@@ -7,37 +6,38 @@ from sqlalchemy.orm import Session
 from auth import get_current_user
 from paper_routes import paper_router
 import auth
-from research_processor import ResearchProcessor  # Add this import
-import os
-from dotenv import load_dotenv
+from research_processor import research_processor  # Add this import
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
-# Load environment variables
-load_dotenv()
-
-app = FastAPI()
+app= FastAPI()
 app.include_router(auth.router)
 app.include_router(paper_router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React app URLs
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 models.Base.metadata.create_all(bind=engine)
 
-# Initialize research processor
-research_processor = ResearchProcessor()
-
 def get_db():
-    db = SessionLocal()
+    db=SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-db_dependency = Annotated[Session, Depends(get_db)]
+db_dependency=Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
-@app.get("/", status_code=status.HTTP_200_OK)
-async def user(user: user_dependency, db: db_dependency):
+@app.get("/",status_code=status.HTTP_200_OK)
+async def user(user:user_dependency,db:db_dependency):
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found or Auth failed")
-    return {"user": user}
+    return { "user": user}
 
 # Add new endpoint for research paper processing
 @app.post("/process-research-paper/")
@@ -120,7 +120,4 @@ async def get_research_paper(paper_id: int, user: user_dependency, db: db_depend
     
     return {"paper": paper}
 
-
-if "__main__" == __name__:
-    import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+    
