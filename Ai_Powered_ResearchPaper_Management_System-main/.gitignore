@@ -2,3 +2,10 @@ venv/
 Backend/venv/
 __pycache__/
 *.db
+Frontend/node_modules/
+.DS_Store
+*.log
+.env
+*.sqlite3
+*.pyc
+.idea/

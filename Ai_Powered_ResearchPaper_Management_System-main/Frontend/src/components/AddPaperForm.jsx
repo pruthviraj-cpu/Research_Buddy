@@ -296,7 +296,6 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
                 <p className="text-red-500 text-sm mt-1">{validationErrors.domain}</p>
               )}
             </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Category <span className="text-red-500">*</span>
@@ -319,7 +318,6 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               )}
             </div>
           </div>
-
           {/* Publish Date */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
