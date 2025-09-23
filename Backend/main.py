@@ -58,7 +58,10 @@ async def process_research_paper(
         file_content = await file.read()
         
         # Process the research paper
-        result = ResearchProcessor.process_research_paper(file_content, file.filename)
+        # Process the research paper
+        processor = ResearchProcessor()  # create instance
+        result = processor.process_research_paper(file_content, file.filename)
+
         
         # Convert publication_date string to date object if available
         publication_date = None

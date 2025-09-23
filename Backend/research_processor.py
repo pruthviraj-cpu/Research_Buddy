@@ -51,7 +51,7 @@ class ResearchProcessor:
         try:
             chat_completion = self.groq_client.chat.completions.create(
                 messages=[{"role": "user", "content": prompt}],
-                model="mixtral-8x7b-32768",
+                model="llama-3.3-70b-versatile",
                 temperature=0.1,
                 max_tokens=4000,
                 response_format={"type": "json_object"}
