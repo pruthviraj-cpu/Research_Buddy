@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from auth import get_current_user
 from paper_routes import paper_router
 import auth
-from research_processor import research_processor  # Add this import
+from research_processor import ResearchProcessor
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
@@ -58,7 +58,7 @@ async def process_research_paper(
         file_content = await file.read()
         
         # Process the research paper
-        result = research_processor.process_research_paper(file_content, file.filename)
+        result = ResearchProcessor.process_research_paper(file_content, file.filename)
         
         # Convert publication_date string to date object if available
         publication_date = None
