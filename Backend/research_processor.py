@@ -30,17 +30,19 @@ class ResearchProcessor:
     def analyze_with_groq(self, text: str) -> Dict[str, Any]:
         """Use Groq API to analyze the research paper"""
         prompt = f"""
-        Analyze this research paper and extract the following information in JSON format:
+        Analyze this research paper and extract the following information in JSON format provide .:
         
         Required fields:
         1. title (string)
-        2. abstract (string - concise summary)
-        3. summary (string - brief content summary)
+        2. abstract (string -  same summary copy directly from paper)
+        3. summary (string - brief content summary in detailed manner and more contextual information 2 paragraphs minimum)
         4. publication_date (string - date of publication in YYYY-MM-DD format if possible)
         5. authors (array of strings)
         6. publication_venue (string - journal, conference, etc.)
         7. region (string - country/region of study)
         8. keywords (array of strings)
+        9. domain (string - research domain/field)
+        10. category (string - paper category/type)
         
         Return ONLY valid JSON with these exact keys. Do not include any additional text.
         

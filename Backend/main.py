@@ -9,6 +9,7 @@ import auth
 from research_processor import ResearchProcessor
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+from models import research_papers,research_papers_test
 
 app= FastAPI()
 app.include_router(auth.router)
@@ -58,10 +59,8 @@ async def process_research_paper(
         file_content = await file.read()
         
         # Process the research paper
-        # Process the research paper
-        processor = ResearchProcessor()  # create instance
+        processor = ResearchProcessor()
         result = processor.process_research_paper(file_content, file.filename)
-
         
         # Convert publication_date string to date object if available
         publication_date = None
@@ -70,16 +69,22 @@ async def process_research_paper(
                 publication_date = datetime.strptime(result['publication_date'], '%Y-%m-%d').date()
             except:
                 # Try other date formats if needed
+                publication_date = None
                 pass
         
-        # Save to database
-        db_paper = models.ResearchPaper(
+        # Save to database with all fields
+        db_paper = models.research_papers_test(
             title=result.get('title', 'Unknown Title'),
             abstract=result.get('abstract', ''),
             summary=result.get('summary', ''),
+            authors=result.get('authors', []),
+            domain=result.get('domain', ''),
+            category=result.get('category', ''),
+            keywords=result.get('keywords', []),
+            publication_venue=result.get('publication_venue', ''),
+            region=result.get('region', ''),
             publication_date=publication_date,
-            pdf_url=pdf_url,  # Use provided URL or None
-            # Store additional metadata as JSON in a field if you have one, or create separate fields
+            pdf_url=pdf_url,
         )
         db.add(db_paper)
         db.commit()
@@ -122,5 +127,3 @@ async def get_research_paper(paper_id: int, user: user_dependency, db: db_depend
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Paper not found")
     
     return {"paper": paper}
-
-    
