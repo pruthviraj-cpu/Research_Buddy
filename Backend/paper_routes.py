@@ -1,16 +1,17 @@
-from fastapi import APIRouter,status,Depends, UploadFile, File, Form, Query
+from fastapi import APIRouter,status,Depends, UploadFile, File, Form, Query,HTTPException
 from typing import Optional
+from auth import get_current_user
 from database import SessionLocal
 from sqlalchemy.orm import Session
-from models import research_papers
+from models import research_papers_test
 from typing import Annotated
 import json
+import models
 
 paper_router = APIRouter(
     prefix='/papers',
     tags=['papers']
 )
-
 
 def get_db():
     db = SessionLocal()
@@ -19,38 +20,7 @@ def get_db():
     finally:
         db.close()
 
-
-# @paper_router.post('/add-paper', status_code=status.HTTP_201_CREATED)
-# async def add_paper(
-#     db: Annotated[Session, Depends(get_db)],
-#     title: str = Form(...),
-#     abstract: str = Form(...),
-#     summary: Optional[str] = Form(None),
-#     publication_date: Optional[str] = Form(None),
-#     pdf_url: Optional[UploadFile] = File(None)
-# ):
-#     # Save uploaded pdf to disk
-#     upload_dir = "C:/Users/hp/Desktop/AI_RPMS/uploads" # Enter your PC path
-#     pdf_path = f"{upload_dir}/{pdf_url.filename}"
-
-#     with open(pdf_path, "wb") as buffer:
-#         buffer.write(await pdf_url.read())
-
-#     new_paper = research_papers(
-#         title=title,
-#         abstract=abstract,
-#         summary=summary,
-#         publication_date=publication_date,
-#         pdf_url=pdf_path
-#     )
-
-#     db.add(new_paper)
-#     db.commit()
-#     db.refresh(new_paper)
-
-#     return new_paper
-
-
+user_dependency = Annotated[dict, Depends(get_current_user)]
 
 @paper_router.post('/add-paper', status_code=status.HTTP_201_CREATED)
 async def add_paper(
@@ -67,7 +37,7 @@ async def add_paper(
     authors_list = json.loads(authors)
     keywords_list = json.loads(keywords)
     
-    new_paper = research_papers(
+    new_paper = research_papers_test(
         title=title,
         authors=authors_list,  # Update your model to include these fields
         domain=domain,
@@ -82,3 +52,25 @@ async def add_paper(
     db.refresh(new_paper)
 
     return new_paper
+
+
+# Endpoint to get research papers
+@paper_router.get("/research-papers")
+async def get_research_papers(user: user_dependency,db: Annotated[Session, Depends(get_db)],):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+    
+    papers = db.query(models.research_papers_test).all()
+    return {"papers": papers}
+
+# Endpoint to get specific research paper
+@paper_router.get("/research-papers/{paper_id}")
+async def get_research_paper(paper_id: int, user: user_dependency, db: Annotated[Session, Depends(get_db)],):
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+
+    paper = db.query(models.research_papers_test).filter(models.research_papers_test.paper_id == paper_id).first()
+    if not paper:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Paper not found")
+    
+    return {"paper": paper}
