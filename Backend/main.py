@@ -9,7 +9,6 @@ import auth
 from research_processor import ResearchProcessor
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
-from models import research_papers,research_papers_test
 
 app= FastAPI()
 app.include_router(auth.router)
@@ -106,24 +105,3 @@ async def process_research_paper(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail=f"Processing failed: {str(e)}"
         )
-
-# Endpoint to get research papers
-@app.get("/research-papers/")
-async def get_research_papers(user: user_dependency, db: db_dependency):
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
-    
-    papers = db.query(models.ResearchPaper).all()
-    return {"papers": papers}
-
-# Endpoint to get specific research paper
-@app.get("/research-papers/{paper_id}")
-async def get_research_paper(paper_id: int, user: user_dependency, db: db_dependency):
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
-    
-    paper = db.query(models.ResearchPaper).filter(models.ResearchPaper.paper_id == paper_id).first()
-    if not paper:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Paper not found")
-    
-    return {"paper": paper}
