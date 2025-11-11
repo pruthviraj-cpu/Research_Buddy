@@ -3,13 +3,15 @@ import { Shield, Plus, LogOut, FileText, BarChart, TrendingUp, Users } from 'luc
 import { useAuth } from '../context/AuthContext.jsx';
 import { useStats } from '../hooks/useStats.js';
 import AddPaperForm from './AddPaperForm.jsx';
+import AddPaperWithAI from './AddPaperWithAI.jsx'; // ✅ ADD THIS IMPORT
 
 const AdminPanel = ({ onRoleSwitch }) => {
-  const { user, logout, token } = useAuth(); // get token from AuthContext
+  const { user, logout, token } = useAuth();
   const { stats, loading: statsLoading, refetch: refetchStats } = useStats();
 
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showAddAIForm, setShowAddAIForm] = useState(false); // ✅ ADD THIS STATE
 
   // NEW STATES
   const [papers, setPapers] = useState([]);
@@ -25,15 +27,13 @@ const AdminPanel = ({ onRoleSwitch }) => {
       const response = await fetch('http://127.0.0.1:8000/papers/research-papers', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`, // needs token
+          'Authorization': `Bearer ${token}`,
         }
       });
 
       if (response.ok) {
         const result = await response.json();
         console.log('Fetched result:', result);
-
-        // Ensure we always store an array
         setPapers(Array.isArray(result) ? result : result.papers || []);
       } else {
         const errorData = await response.json();
@@ -70,10 +70,30 @@ const AdminPanel = ({ onRoleSwitch }) => {
     setShowAddForm(false);
   };
 
-  const handleFormSuccess = () => {
-    setShowAddForm(false);
+  // ✅ MODIFIED: Handle both regular and AI form success
+  const handleFormSuccess = (action) => {
+    if (action === 'openAI') {
+      // User clicked "Add Paper with AI" button in the form
+      setShowAddForm(false);
+      setShowAddAIForm(true); // Open AI modal
+    } else {
+      // Regular paper added successfully
+      setShowAddForm(false);
+      refetchStats();
+      fetchPapers();
+    }
+  };
+
+  // ✅ ADD THIS: Handle AI form close
+  const handleAIFormClose = () => {
+    setShowAddAIForm(false);
+  };
+
+  // ✅ ADD THIS: Handle AI form success
+  const handleAIFormSuccess = () => {
+    setShowAddAIForm(false);
     refetchStats();
-    fetchPapers(); // refresh papers list after adding
+    fetchPapers(); // refresh papers list after AI adds paper
   };
 
   return (
@@ -183,17 +203,6 @@ const AdminPanel = ({ onRoleSwitch }) => {
           {error && <p className="error-text">{error}</p>}
 
           <div className="recent-papers-grid">
-            {/* {papers.length === 0 && !loading ? (
-              <p>No papers found</p>
-            ) : (
-              papers.map(paper => (
-                <div key={paper.id} className="recent-paper-card">
-                  <div className="paper-category">{paper.category}</div>
-                  <h3 className="paper-title">{paper.title}</h3>
-                  <div className="paper-date">{paper.date}</div>
-                </div>
-              ))
-            )} */}
             {Array.isArray(papers) && papers.length > 0 ? (
               papers.map(paper => (
                 <div key={paper.id} className="recent-paper-card">
@@ -207,15 +216,20 @@ const AdminPanel = ({ onRoleSwitch }) => {
             )}
           </div>
         </div>
-
-
       </main>
 
-      {/* Add Paper Form */}
+      {/* ✅ Regular Add Paper Form */}
       <AddPaperForm
         isOpen={showAddForm}
         onClose={handleFormClose}
         onSuccess={handleFormSuccess}
+      />
+
+      {/* ✅ ADD THIS: AI Add Paper Form */}
+      <AddPaperWithAI
+        isOpen={showAddAIForm}
+        onClose={handleAIFormClose}
+        onSuccess={handleAIFormSuccess}
       />
     </div>
   );

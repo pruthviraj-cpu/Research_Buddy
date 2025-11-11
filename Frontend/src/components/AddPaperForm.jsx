@@ -436,6 +436,24 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
             >
               Cancel
             </button>
+            
+            {/* Add Paper with AI Button */}
+            <button
+              type="button"
+              onClick={() => {
+                handleClose();
+                // Open AI modal - you can pass a prop to parent or use state management
+                if (onSuccess) {
+                  onSuccess('openAI'); // Signal to parent to open AI modal
+                }
+              }}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading}
+            >
+              Add Paper with AI
+            </button>
+            
+            {/* Regular Add Paper Button */}
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
