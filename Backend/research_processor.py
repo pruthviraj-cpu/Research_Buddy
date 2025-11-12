@@ -38,8 +38,6 @@ class ResearchProcessor:
         3. summary (string - brief content summary in detailed manner and more contextual information 2 paragraphs minimum)
         4. publication_date (string - date of publication in YYYY-MM-DD format if possible)
         5. authors (array of strings)
-        6. publication_venue (string - journal, conference, etc.)
-        7. region (string - country/region of study)
         8. keywords (array of strings)
         9. domain (string - research domain/field)
         10. category (string - paper category/type)
