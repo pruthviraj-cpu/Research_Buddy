@@ -1,7 +1,8 @@
 from database import Base
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, String, Date, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, String, Date, TIMESTAMP,func
 from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.orm import relationship
 
 class Users(Base):
     __tablename__ = "users"
@@ -26,3 +27,26 @@ class research_papers_test(Base):
     publication_venue = Column(String(255), nullable=True)  # New field
     region = Column(String(100), nullable=True)  # New field
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.now)
+
+#     authors = relationship("Author", back_populates="paper", cascade="all, delete-orphan")
+#     keywords = relationship("Keyword", back_populates="paper", cascade="all, delete-orphan")
+
+# class Author(Base):
+#     __tablename__ = "authors"
+
+#     author_id = Column(Integer, primary_key=True)
+#     paper_id = Column(Integer, ForeignKey("research_papers_test.paper_id", ondelete="CASCADE"), nullable=False)
+#     name = Column(String(255), nullable=False)
+
+#     paper = relationship("research_papers_test", back_populates="authors")
+
+
+# class Keyword(Base):
+#     __tablename__ = "keywords"
+
+#     keyword_id = Column(Integer, primary_key=True)
+#     paper_id = Column(Integer, ForeignKey("research_papers_test.paper_id", ondelete="CASCADE"), nullable=False)
+#     keywords = Column(String(100), nullable=False)
+#     created_at = Column(String, default="now()")
+
+#     paper = relationship("research_papers_test", back_populates="keywords")

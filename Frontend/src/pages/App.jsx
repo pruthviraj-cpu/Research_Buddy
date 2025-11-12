@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from '../context/AuthContext.jsx';
 import ProtectedRoute from '../components/auth/ProtectedRoute.jsx';
 import Dashboard from '../components/Dashboard.jsx';
 import AdminPanel from '../components/AdminPanel.jsx';
+import ManagePapers from '../components/Manage_Papers.jsx';
 
 // Main App Component
 const AppContent = () => {
@@ -62,6 +63,17 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <Dashboard onRoleSwitch={switchToAdmin} />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* admin manage papers */}
+        <Route
+          path="/manage-papers"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <ManagePapers />
             </ProtectedRoute>
           }
         />

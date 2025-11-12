@@ -33,7 +33,6 @@ const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
     setError(null);
 
     try {
-      // Simulate upload delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setUploaded(true);
@@ -49,24 +48,21 @@ const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
     setError(null);
 
     try {
-      // Simulate AI processing and paper addition
       await new Promise(resolve => setTimeout(resolve, 3000));
 
-      // Here you would call your actual API to process PDF and add paper
-      // const formData = new FormData();
-      // formData.append('pdf', pdfFile);
-      // const response = await fetch('http://127.0.0.1:8000/papers/add-paper-ai', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`,
-      //   },
-      //   body: formData
-      // });
+      const formData = new FormData();
+      formData.append('file', pdfFile);
+      const response = await fetch('http://127.0.0.1:8000/process-research-paper/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        body: formData
+      });
       
       setGenerating(false);
       setSuccess(true);
       
-      // Auto-close after showing success message
       setTimeout(() => {
         handleClose();
         onSuccess?.();

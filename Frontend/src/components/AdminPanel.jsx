@@ -3,15 +3,18 @@ import { Shield, Plus, LogOut, FileText, BarChart, TrendingUp, Users } from 'luc
 import { useAuth } from '../context/AuthContext.jsx';
 import { useStats } from '../hooks/useStats.js';
 import AddPaperForm from './AddPaperForm.jsx';
-import AddPaperWithAI from './AddPaperWithAI.jsx'; // ✅ ADD THIS IMPORT
+import AddPaperWithAI from './AddPaperWithAI.jsx';
+import { useNavigate } from "react-router-dom";
 
 const AdminPanel = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth();
+  const navigate = useNavigate();
   const { stats, loading: statsLoading, refetch: refetchStats } = useStats();
+
 
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showAddAIForm, setShowAddAIForm] = useState(false); // ✅ ADD THIS STATE
+  const [showAddAIForm, setShowAddAIForm] = useState(false); 
 
   // NEW STATES
   const [papers, setPapers] = useState([]);
@@ -96,6 +99,8 @@ const AdminPanel = ({ onRoleSwitch }) => {
     fetchPapers(); // refresh papers list after AI adds paper
   };
 
+
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -134,24 +139,24 @@ const AdminPanel = ({ onRoleSwitch }) => {
             Overview
           </button>
           <button
-            onClick={() => setActiveTab('papers')}
-            className={`nav-tab ${activeTab === 'papers' ? 'active' : ''}`}
+            onClick={() => navigate("/manage-papers")}
+            className={`nav-tab ${activeTab === "papers" ? "active" : ""}`}
           >
             Manage Papers
           </button>
           <button
-            onClick={() => setActiveTab('analytics')}
+            onClick={() => navigate('/analytics')}
             className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`}
           >
             Analytics
           </button>
         </div>
-      </nav>
+      </nav >
 
       {/* Main Content */}
-      <main className="admin-main">
+      < main className="admin-main" >
         {/* Stats Section */}
-        <div className="stats-section">
+        < div className="stats-section" >
           <div className="admin-stats-grid">
             <div className="stat-card blue">
               <div className="stat-icon"><FileText size={24} /></div>
@@ -193,10 +198,10 @@ const AdminPanel = ({ onRoleSwitch }) => {
               </div>
             </div>
           </div>
-        </div>
+        </div >
 
         {/* Recently Added Papers */}
-        <div className="recent-papers-section">
+        < div className="recent-papers-section" >
           <h2>Recently Added Papers</h2>
 
           {loading && <p>Loading papers...</p>}
@@ -215,23 +220,23 @@ const AdminPanel = ({ onRoleSwitch }) => {
               <p>No papers found</p>
             )}
           </div>
-        </div>
-      </main>
+        </div >
+      </main >
 
       {/* ✅ Regular Add Paper Form */}
-      <AddPaperForm
+      < AddPaperForm
         isOpen={showAddForm}
         onClose={handleFormClose}
         onSuccess={handleFormSuccess}
       />
 
       {/* ✅ ADD THIS: AI Add Paper Form */}
-      <AddPaperWithAI
+      < AddPaperWithAI
         isOpen={showAddAIForm}
         onClose={handleAIFormClose}
         onSuccess={handleAIFormSuccess}
       />
-    </div>
+    </div >
   );
 };
 
