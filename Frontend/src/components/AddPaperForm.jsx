@@ -16,6 +16,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
     category: '',
     publishDate: '',
     abstract: '',
+    summary: '',
     keywords: [''],
     pdfUrl: ''
   });
@@ -51,6 +52,10 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
       errors.abstract = 'Abstract is required';
     }
 
+    if (!formData.summary.trim()) {
+      errors.abstract = 'Summary is required';
+    }
+
     if (formData.keywords.filter(keyword => keyword.trim()).length === 0) {
       errors.keywords = 'At least one keyword is required';
     }
@@ -76,6 +81,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
       formDataToSend.append('category', paperData.category);
       formDataToSend.append('publishDate', paperData.publishDate);
       formDataToSend.append('abstract', paperData.abstract);
+      formDataToSend.append('summary', paperData.abstract);
       formDataToSend.append('keywords', JSON.stringify(paperData.keywords));
       formDataToSend.append('pdfUrl', paperData.pdfUrl);
 
@@ -170,6 +176,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
       keywords: formData.keywords.filter(keyword => keyword.trim()).map(keyword => keyword.trim()),
       title: formData.title.trim(),
       abstract: formData.abstract.trim(),
+      summary: formData.summary.trim(),
       pdfUrl: formData.pdfUrl.trim()
     };
 
@@ -184,6 +191,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
       category: '',
       publishDate: '',
       abstract: '',
+      summary: '',
       keywords: [''],
       pdfUrl: ''
     });
@@ -354,6 +362,26 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
             />
             {validationErrors.abstract && (
               <p className="text-red-500 text-sm mt-1">{validationErrors.abstract}</p>
+            )}
+          </div>
+
+          {/* Summary */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Summary <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={formData.summary}
+              onChange={(e) => handleInputChange('summary', e.target.value)}
+              rows={4}
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
+                validationErrors.summary ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+              }`}
+              placeholder="Enter paper summary"
+              disabled={loading}
+            />
+            {validationErrors.summary && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.summary}</p>
             )}
           </div>
 

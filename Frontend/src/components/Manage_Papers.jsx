@@ -17,8 +17,9 @@ const ManagePapers = ({ onRoleSwitch }) => {
     authors: [""],
     domain: "",
     category: "",
-    publish_date: "",
+    publication_date: "",
     abstract: "",
+    summary:"",
     keywords: [""],
     pdf_url: "",
   })
@@ -82,6 +83,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
       errors.abstract = "Abstract is required"
     }
 
+    if (!formData.summary.trim()) {
+      errors.abstract = "Summary is required"
+    }
+
     if (formData.keywords.filter((keyword) => keyword.trim()).length === 0) {
       errors.keywords = "At least one keyword is required"
     }
@@ -111,8 +116,9 @@ const ManagePapers = ({ onRoleSwitch }) => {
       authors: paper.authors ? (Array.isArray(paper.authors) ? paper.authors : [paper.authors]) : [""],
       domain: paper.domain || "",
       category: paper.category || "",
-      publish_date: paper.publish_date || "",
+      publication_date: paper.publication_date || "",
       abstract: paper.abstract || paper.content || "",
+      summary: paper.summary || paper.content || "",
       keywords: paper.keywords ? (Array.isArray(paper.keywords) ? paper.keywords : [paper.keywords]) : [""],
       pdf_url: paper.pdf_url || "",
     })
@@ -142,8 +148,9 @@ const ManagePapers = ({ onRoleSwitch }) => {
           authors: formData.authors.filter((a) => a.trim()).map((a) => a.trim()),
           domain: formData.domain,
           category: formData.category,
-          publish_date: formData.publish_date,
+          publication_date: formData.publication_date,
           abstract: formData.abstract.trim(),
+          summary: formData.summary.trim(),
           keywords: formData.keywords.filter((k) => k.trim()).map((k) => k.trim()),
           pdf_url: formData.pdf_url.trim(),
         }),
@@ -167,7 +174,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
   const handleDeleteClick = async (paper) => {
     if (window.confirm(`Are you sure you want to delete "${paper.title}"? This action cannot be undone.`)) {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/papers/${paper.paper_id}`, {
+        const res = await fetch(`http://127.0.0.1:8000/papers/delete-paper/${paper.paper_id}`, {
           method: "DELETE",
           headers: getAuthHeaders(),
         })
@@ -237,6 +244,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
       category: "",
       publish_date: "",
       abstract: "",
+      summary:"",
       keywords: [""],
       pdf_url: "",
     })
@@ -255,8 +263,8 @@ const ManagePapers = ({ onRoleSwitch }) => {
               <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-300" />
             </div>
             <div className="header-text">
-              <h1>Research Hub</h1>
-              <p>Welcome back, {user?.displayName || user?.name || "User"}</p>
+              <h1>Admin Dashboard</h1>
+              <p>Welcome back, {user?.displayName || user?.name || "Admin"}</p>
             </div>
           </div>
 
@@ -576,6 +584,26 @@ const ManagePapers = ({ onRoleSwitch }) => {
                       : "border-gray-300"
                   }`}
                   placeholder="Enter paper abstract"
+                  disabled={submitting}
+                />
+                {validationErrors.abstract && <p className="text-red-500 text-sm mt-1">{validationErrors.abstract}</p>}
+              </div>
+
+              {/* Summary */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Summary <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={formData.summary}
+                  onChange={(e) => handleInputChange("summary", e.target.value)}
+                  rows={4}
+                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
+                    validationErrors.summary
+                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300"
+                  }`}
+                  placeholder="Enter paper summary"
                   disabled={submitting}
                 />
                 {validationErrors.abstract && <p className="text-red-500 text-sm mt-1">{validationErrors.abstract}</p>}

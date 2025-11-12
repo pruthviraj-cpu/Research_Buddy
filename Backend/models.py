@@ -24,8 +24,6 @@ class research_papers_test(Base):
     publication_date = Column(Date, nullable=True)  # Made nullable
     pdf_url = Column(String(500), nullable=True)
     summary = Column(Text, nullable=True)
-    publication_venue = Column(String(255), nullable=True)  # New field
-    region = Column(String(100), nullable=True)  # New field
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.now)
 
 #     authors = relationship("Author", back_populates="paper", cascade="all, delete-orphan")

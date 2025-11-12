@@ -1,17 +1,18 @@
-# from pydantic import BaseModel, HttpUrl
-# from typing import List, Optional
-# from datetime import date
+from pydantic import BaseModel, HttpUrl
+from typing import List, Optional
+from datetime import date
 
 
-# class PaperUpdate(BaseModel):
-#     title: str
-#     authors: List[str]
-#     domain: str
-#     category: str
-#     publish_date: str
-#     abstract: str
-#     keywords: List[str]
-#     pdf_url: HttpUrl
+class PaperUpdate(BaseModel):
+    title: str
+    authors: List[str]
+    domain: str
+    category: str
+    publication_date: date
+    abstract: str
+    summary:str
+    keywords: List[str]
+    pdf_url: HttpUrl
 
 # class AuthorBase(BaseModel):
 #     name: str
