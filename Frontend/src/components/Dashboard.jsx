@@ -164,5 +164,4 @@ const Dashboard = ({ onRoleSwitch }) => {
     </div>
   );
 };
-
 export default Dashboard;
