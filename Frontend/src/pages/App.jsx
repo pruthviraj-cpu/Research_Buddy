@@ -5,6 +5,7 @@ import ProtectedRoute from '../components/auth/ProtectedRoute.jsx';
 import Dashboard from '../components/Dashboard.jsx';
 import AdminPanel from '../components/AdminPanel.jsx';
 import ManagePapers from '../components/Manage_Papers.jsx';
+import PaperAnalytics from '../components/PaperAnalytics.jsx';
 
 // Main App Component
 const AppContent = () => {
@@ -74,6 +75,16 @@ const AppContent = () => {
           element={
             <ProtectedRoute requiredRole="admin">
               <ManagePapers />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* admin analytics of paper papers */}
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <PaperAnalytics />
             </ProtectedRoute>
           }
         />

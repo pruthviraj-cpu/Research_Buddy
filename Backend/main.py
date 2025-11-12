@@ -5,6 +5,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from auth import get_current_user
 from paper_routes import paper_router
+from analytics_routes import analytics_router
 import auth
 from research_processor import ResearchProcessor
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +14,7 @@ from datetime import datetime
 app= FastAPI()
 app.include_router(auth.router)
 app.include_router(paper_router)
+app.include_router(analytics_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # React app URLs
@@ -80,8 +82,6 @@ async def process_research_paper(
             domain=result.get('domain', ''),
             category=result.get('category', ''),
             keywords=result.get('keywords', []),
-            publication_venue=result.get('publication_venue', ''),
-            region=result.get('region', ''),
             publication_date=publication_date,
             pdf_url=pdf_url,
         )

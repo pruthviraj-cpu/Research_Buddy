@@ -1,0 +1,279 @@
+"use client"
+import { useState, useEffect, useCallback } from "react"
+import { useAuth } from "../context/AuthContext.jsx"
+import { Trash2, X, LogOut, BookOpen, RefreshCw, Eye, Download, PlusCircle , Minus, Edit2  } from "lucide-react"
+
+const PaperAnalytics = () => {
+  const { getAuthHeaders, user, logout, token } = useAuth()
+  const [actions, setActions] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [filterAction, setFilterAction] = useState("All")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const fetchActions = useCallback(async () => {
+    try {
+      setError(null)
+      setLoading(true)
+
+      const response = await fetch("http://127.0.0.1:8000/analytics/paper-actions", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, 
+        },
+      })
+
+      if (!response.ok) throw new Error("Failed to fetch actions")
+
+      const data = await response.json()
+      setActions(Array.isArray(data) ? data : data.actions || [])
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch actions")
+      setActions([])
+    } finally {
+      setLoading(false)
+    }
+  }, [token])
+
+
+  useEffect(() => {
+    fetchActions()
+    const interval = setInterval(() => {
+      setIsRefreshing(true)
+      fetchActions()
+      setIsRefreshing(false)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [fetchActions])
+
+  const getActionIcon = (action) => {
+    switch (action) {
+      case "Added":
+        return <PlusCircle  size={24} />;
+      case "Updated":
+        return <Edit2 size={24} />;
+      case "Deleted":
+        return <Trash2 size={24}/>;
+      default:
+        return null
+    }
+  }
+
+  const handleLogout = async () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      try {
+        await logout()
+      } catch (error) {
+        console.error("Logout failed:", error)
+      }
+    }
+  }
+
+  const getActionColor = (action) => {
+    switch (action) {
+      case "Added":
+        return "bg-green-100 text-green-900 dark:text-green-700 dark:bg-green-900/30 dark:text-green-300"
+      case "Updated":
+        return "bg-yellow-100 text-yellow-900 dark:text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300"
+      case "Deleted":
+        return "bg-red-100 text-red-900 dark:text-red-700 dark:bg-red-900/30 dark:text-red-300"
+      default:
+        return "bg-gray-100 text-gray-900 dark:text-gray-700 dark:bg-gray-900/30 dark:text-gray-300"
+    }
+  }
+
+  const getActionBorderColor = (action) => {
+    switch (action) {
+      case "Added":
+        return "border-green-100 dark:border-green-400"
+      case "Updated":
+        return "border-yellow-100 dark:border-yellow-400"
+      case "Deleted":
+        return "border-red-100 dark:border-red-400"
+      default:
+        return "border-gray-100 dark:border-gray-400"
+    }
+  }
+
+  const filteredActions = actions.filter((action) => {
+    const matchesFilter = filterAction === "All" || action.action === filterAction
+    const matchesSearch =
+      action.paper_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      action.user.toLowerCase().includes(searchTerm.toLowerCase())
+    return matchesFilter && matchesSearch
+  })
+
+  const stats = {
+    added: filteredActions.filter((a) => a.action === "Added").length,
+    updated: filteredActions.filter((a) => a.action === "Updated").length,
+    deleted: filteredActions.filter((a) => a.action === "Deleted").length,
+  }
+
+  return (
+    <div className="dashboard-container">
+      <header className="dashboard-header">
+        <div className="header-content">
+          <div className="header-left">
+            <div className="logo-container">
+              <BookOpen className="w-6 h-6 text-blue-600 dark:text-blue-300" />
+            </div>
+            <div className="header-text">
+              <h1>Admin Dashboard</h1>
+              <p>Welcome back, {"Admin"}</p>
+            </div>
+          </div>
+          <div className="header-right">
+            <button
+              onClick={async () => {
+                setIsRefreshing(true)
+                try {
+                  await fetchActions()
+                } finally {
+                  setIsRefreshing(false)
+                }
+              }}
+              disabled={isRefreshing}
+              className="add-paper-btn"
+              title="Refresh data"
+            >
+              <RefreshCw className="w-4 h-4" />
+              {isRefreshing ? "Refreshing..." : "Refresh"}
+            </button>
+
+            <button onClick={handleLogout} className="logout-btn">
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main className="dashboard-main">
+        {/* Search and Filter Section */}
+        <div className="mb-6 space-y-4">
+          <input
+            type="text"
+            placeholder="Search by paper title or user..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+          />
+
+          <div className="flex flex-wrap gap-2">
+            {["All", "Added", "Updated", "Deleted"].map((action) => (
+              <button
+                key={action}
+                onClick={() => setFilterAction(action)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${filterAction === action
+                  ? action === "Added"
+                    ? "bg-green-500 text-white"
+                    : action === "Updated"
+                      ? "bg-yellow-500 text-white"
+                      : action === "Deleted"
+                        ? "bg-red-500 text-white"
+                        : "bg-blue-500 text-white"
+                  : "bg-slate-700 dark:bg-slate-800 text-slate-300 hover:bg-slate-600"
+                  }`}
+              >
+                {action}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        {!loading && filteredActions.length > 0 && (
+          <div className="stats-section">
+            <div className="stats-grid">
+              <div className="stat-card green">
+                <div className="flex items-center gap-4">
+                  <div className="stat-icon"><PlusCircle size={24}/></div>
+                  <div className="stat-content">
+                    <div className="stat-number">{stats.added}</div>
+                    <div className="stat-label">Added</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-card yellow">
+                <div className="flex items-center gap-4">
+                  <div className="stat-icon"><Edit2 size={24}/></div>
+                  <div className="stat-content">
+                    <div className="stat-number">{stats.updated}</div>
+                    <div className="stat-label">Updated</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="stat-card red">
+                <div className="flex items-center gap-4">
+                  <div className="stat-icon"><Trash2 size={24}/></div>
+                  <div className="stat-content">
+                    <div className="stat-number">{stats.deleted}</div>
+                    <div className="stat-label">Deleted</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analytics Table Section */}
+        <div className="papers-section">
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-slate-400">Loading analytics data...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-red-900/20 border border-red-800 text-red-400 rounded-lg p-4">
+              <p className="font-semibold">Error: {error}</p>
+            </div>
+          ) : filteredActions.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-slate-400">No paper actions found.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-800 border-b border-slate-700">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-white">Paper Title</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-white">Action</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-white">User</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-white">Timestamp</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-white">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredActions.map((action, idx) => (
+                    <tr key={idx} className="border-b border-slate-700 hover:bg-slate-800/50 transition-colors">
+                      <td className="px-6 py-4 text-sm text-black font-medium max-w-xs truncate">
+                        {action.paper_title}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <span
+                          className={`inline-flex items-center gap-2 px-3 py-1 rounded-full font-semibold text-xs border ${getActionColor(action.action)} ${getActionBorderColor(action.action)}`}
+                        >
+                          {getActionIcon(action.action)}
+                          {action.action}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-black font-medium max-w-xs truncate">{action.user}</td>
+                      <td className="px-6 py-4 text-sm text-black font-medium max-w-xs truncate">
+                        {new Date(action.timestamp).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-black font-medium max-w-xs truncate">{action.notes || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+export default PaperAnalytics

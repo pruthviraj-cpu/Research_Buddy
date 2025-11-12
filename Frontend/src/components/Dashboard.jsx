@@ -1,77 +1,90 @@
-import { useState, useEffect } from 'react';
-import { Search, BookOpen, Eye, Globe, LogOut } from 'lucide-react';
-import { useStats, useDomains, useCategories } from '../hooks/useStats.js';
-import { useAuth } from '../context/AuthContext.jsx';
-import PaperCard from './PaperCard.jsx';
+"use client"
+
+import { useState, useEffect } from "react"
+import { BookOpen, Eye, Globe, LogOut } from "lucide-react"
+import { useStats, useDomains, useCategories } from "../hooks/useStats.js"
+import { useAuth } from "../context/AuthContext.jsx"
+import PaperCard from "./PaperCard.jsx"
 
 const Dashboard = ({ onRoleSwitch }) => {
-  const { user, logout, token } = useAuth();
+  const { user, logout, token } = useAuth()
 
-  const [papers, setPapers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [papers, setPapers] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterDomain, setFilterDomain] = useState("All")
 
-  const { stats, loading: statsLoading } = useStats();
-  const { domains } = useDomains();
-  const { categories } = useCategories();
+  const { stats, loading: statsLoading } = useStats()
+  const { domains } = useDomains()
+  const { categories } = useCategories()
 
   //fetch papers directly (same as AdminPanel)
   const fetchPapers = async () => {
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
 
     try {
       const response = await fetch("http://127.0.0.1:8000/papers/research-papers", {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-      });
+      })
 
       if (response.ok) {
-        const result = await response.json();
-        console.log("Fetched papers:", result);
+        const result = await response.json()
+        console.log("Fetched papers:", result)
 
         // ensure it's always an array
-        setPapers(Array.isArray(result) ? result : result.papers || []);
+        setPapers(Array.isArray(result) ? result : result.papers || [])
       } else {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to fetch papers");
+        const errorData = await response.json()
+        throw new Error(errorData.detail || "Failed to fetch papers")
       }
     } catch (err) {
-      console.error("Error fetching papers:", err);
-      setError(err.message);
-      setPapers([]);
+      console.error("Error fetching papers:", err)
+      setError(err.message)
+      setPapers([])
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchPapers();
-  }, []);
+    fetchPapers()
+  }, [])
 
   const handleViewPaper = (paperId) => {
-    console.log("View count increment not yet wired:", paperId);
-  };
+    console.log("View count increment not yet wired:", paperId)
+  }
 
   const handleLogout = async () => {
     if (window.confirm("Are you sure you want to logout?")) {
       try {
-        await logout();
+        await logout()
       } catch (error) {
-        console.error("Logout failed:", error);
+        console.error("Logout failed:", error)
       }
     }
-  };
+  }
 
   const handleDownloadPaper = (pdfUrl, title) => {
     if (pdfUrl) {
-      window.open(pdfUrl, "_blank");
+      window.open(pdfUrl, "_blank")
     } else {
-      alert(`Download link not available for: ${title}`);
+      alert(`Download link not available for: ${title}`)
     }
-  };
+  }
+
+  const filteredPapers = papers.filter((paper) => {
+    const matchesDomain = filterDomain === "All" || paper.domain === filterDomain
+    const matchesSearch =
+      paper.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (paper.author && paper.author.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (paper.authors && paper.authors.some((a) => a.toLowerCase().includes(searchTerm.toLowerCase())))
+    return matchesDomain && matchesSearch
+  })
 
   return (
     <div className="dashboard-container">
@@ -104,35 +117,61 @@ const Dashboard = ({ onRoleSwitch }) => {
 
       {/* Main Content */}
       <main className="dashboard-main">
+        <div className="mb-6 space-y-4">
+          <input
+            type="text"
+            placeholder="Search by paper title or author..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
+
+
+            <div className="flex flex-wrap gap-2">
+              {["All", ...(domains || [])].map((domain) => (
+                <button
+                  key={domain}
+                  onClick={() => setFilterDomain(domain)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${filterDomain === domain
+                      ? "bg-slate-600 text-white" 
+                      : "bg-white-700 dark:bg-slate-200 text-black hover:bg-slate-600"
+                    }`}
+                >
+                  {domain}
+                </button>
+              ))}
+            </div>
+        </div>
+
         {/* Stats Section */}
         <div className="stats-section">
           <div className="stats-grid">
             <div className="stat-card blue">
-              <div className="stat-icon"><BookOpen size={24} /></div>
+              <div className="stat-icon">
+                <BookOpen size={24} />
+              </div>
               <div className="stat-content">
-                <div className="stat-number">
-                  {statsLoading ? "..." : stats?.totalPapers || 0}
-                </div>
-                <div className="stat-label">Available Papers</div>
+                <div className="stat-number">{statsLoading ? "..." : filteredPapers.length}</div>
+                <div className="stat-label">Papers Found</div>
               </div>
             </div>
 
             <div className="stat-card cyan">
-              <div className="stat-icon"><Eye size={24} /></div>
+              <div className="stat-icon">
+                <Eye size={24} />
+              </div>
               <div className="stat-content">
-                <div className="stat-number">
-                  {statsLoading ? "..." : (stats?.totalViews || 0).toLocaleString()}
-                </div>
+                <div className="stat-number">{statsLoading ? "..." : (stats?.totalViews || 0).toLocaleString()}</div>
                 <div className="stat-label">Total Views</div>
               </div>
             </div>
 
             <div className="stat-card green">
-              <div className="stat-icon"><Globe size={24} /></div>
+              <div className="stat-icon">
+                <Globe size={24} />
+              </div>
               <div className="stat-content">
-                <div className="stat-number">
-                  {statsLoading ? "..." : stats?.totalDomains || 0}
-                </div>
+                <div className="stat-number">{statsLoading ? "..." : stats?.totalDomains || 0}</div>
                 <div className="stat-label">Domains</div>
               </div>
             </div>
@@ -145,11 +184,11 @@ const Dashboard = ({ onRoleSwitch }) => {
             <p>Loading papers...</p>
           ) : error ? (
             <p className="error-text">{error}</p>
-          ) : papers.length === 0 ? (
+          ) : filteredPapers.length === 0 ? (
             <p>No papers found.</p>
           ) : (
             <div className="papers-grid">
-              {papers.map((paper) => (
+              {filteredPapers.map((paper) => (
                 <PaperCard
                   key={paper.id}
                   paper={paper}
@@ -162,6 +201,6 @@ const Dashboard = ({ onRoleSwitch }) => {
         </div>
       </main>
     </div>
-  );
-};
-export default Dashboard;
+  )
+}
+export default Dashboard

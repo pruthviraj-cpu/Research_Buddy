@@ -1,6 +1,6 @@
 from database import Base
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, String, Date, TIMESTAMP,func
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, String, Date, TIMESTAMP,func, DateTime
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import relationship
 
@@ -48,3 +48,14 @@ class research_papers_test(Base):
 #     created_at = Column(String, default="now()")
 
 #     paper = relationship("research_papers_test", back_populates="keywords")
+
+class PaperAction(Base):
+    __tablename__ = "paper_actions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    paper_id = Column(Integer, nullable=False)
+    paper_title = Column(String(255), nullable=False)
+    action = Column(String(50), nullable=False)  # "Added", "Updated", "Deleted"
+    user = Column(String(100), nullable=False)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    notes = Column(Text, nullable=True)
