@@ -243,11 +243,15 @@ export const AuthProvider = ({ children }) => {
       // Your backend doesn't have a logout endpoint, so just clear local storage
       removeStoredToken();
       dispatch({ type: 'LOGOUT' });
+      
+      // Create an event to notify about logout
+      window.dispatchEvent(new Event('auth-logout'));
     } catch (error) {
       console.error('Logout failed:', error);
       // Still logout locally even if server call fails
       removeStoredToken();
       dispatch({ type: 'LOGOUT' });
+      window.dispatchEvent(new Event('auth-logout'));
     }
   };
 

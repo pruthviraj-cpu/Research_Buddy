@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 import { Eye, EyeOff, User, Lock, Shield, Mail, UserPlus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import PasswordInput from './PasswordInput.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ onSuccess }) => {
   const { login, register, loading, error, clearError } = useAuth();
   const [mode, setMode] = useState('login');
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -54,6 +56,7 @@ const LoginForm = ({ onSuccess }) => {
       if (mode === 'login') {
         await login(formData.username, formData.password);
         onSuccess?.();
+        navigate('/dashboard');
       } else if (mode === 'register') {
         await register({
           username: formData.username,

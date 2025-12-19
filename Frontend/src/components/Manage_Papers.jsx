@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
 import { Edit2, Trash2, X, LogOut, BookOpen, Eye, Download, Plus, Minus } from "lucide-react"
-
+import { useNavigate } from "react-router-dom";
 const ManagePapers = ({ onRoleSwitch }) => {
+  const navigate = useNavigate()
+
   const { getAuthHeaders, user, logout, token } = useAuth()
   const [papers, setPapers] = useState([])
   const [loading, setLoading] = useState(true)
@@ -269,11 +271,9 @@ const ManagePapers = ({ onRoleSwitch }) => {
           </div>
 
           <div className="header-right">
-            {user?.is_admin && onRoleSwitch && (
-              <button onClick={onRoleSwitch} className="add-paper-btn">
-                Admin Panel
-              </button>
-            )}
+            <button onClick={() => navigate("/admin")} className="add-paper-btn">
+              Back to Admin
+            </button>
             <button onClick={handleLogout} className="logout-btn">
               <LogOut className="w-4 h-4" />
               Logout
@@ -355,13 +355,13 @@ const ManagePapers = ({ onRoleSwitch }) => {
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => handleDeleteClick(paper)}
                         className="icon-btn icon-btn-delete"
                         title="Delete paper"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </button> */}
                     </div>
                   </div>
 

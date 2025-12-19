@@ -133,25 +133,25 @@ const AdminPanel = ({ onRoleSwitch }) => {
       <nav className="admin-nav">
         <div className="nav-content">
           <button
-            onClick={() => setActiveTab('overview')}
-            className={`nav-tab ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => navigate("/admin")}
+            className={`nav-tab ${location.pathname === '/admin' ? 'active' : ''}`}
           >
             Overview
           </button>
           <button
             onClick={() => navigate("/manage-papers")}
-            className={`nav-tab ${activeTab === "papers" ? "active" : ""}`}
+            className={`nav-tab ${location.pathname === '/manage-papers' ? 'active' : ''}`}
           >
             Manage Papers
           </button>
           <button
             onClick={() => navigate('/analytics')}
-            className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`}
+            className={`nav-tab ${location.pathname === '/analytics' ? 'active' : ''}`}
           >
             Analytics
           </button>
         </div>
-      </nav >
+      </nav>
 
       {/* Main Content */}
       < main className="admin-main" >

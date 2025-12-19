@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
 import { Trash2, X, LogOut, BookOpen, RefreshCw, Eye, Download, PlusCircle , Minus, Edit2  } from "lucide-react"
+import { useNavigate } from "react-router-dom";
 
 const PaperAnalytics = () => {
   const { getAuthHeaders, user, logout, token } = useAuth()
@@ -11,7 +12,7 @@ const PaperAnalytics = () => {
   const [filterAction, setFilterAction] = useState("All")
   const [searchTerm, setSearchTerm] = useState("")
   const [isRefreshing, setIsRefreshing] = useState(false)
-
+  const navigate = useNavigate();
   const fetchActions = useCallback(async () => {
     try {
       setError(null)
@@ -124,6 +125,9 @@ const PaperAnalytics = () => {
             </div>
           </div>
           <div className="header-right">
+            <button onClick={() => navigate("/admin")} className="add-paper-btn">
+              Back to Admin
+            </button>
             <button
               onClick={async () => {
                 setIsRefreshing(true)

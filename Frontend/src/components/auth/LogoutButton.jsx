@@ -1,14 +1,16 @@
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom'; // Add this import
 
 const LogoutButton = ({ className = "btn-secondary" }) => {
   const { logout, loading } = useAuth();
+  const navigate = useNavigate(); // Add this
 
   const handleLogout = async () => {
     if (window.confirm('Are you sure you want to logout?')) {
       try {
         await logout();
-        // The AuthContext will automatically redirect to login page
-        // because the user will no longer be authenticated
+        // Navigate to login page after successful logout
+        navigate('/login');
       } catch (error) {
         console.error('Logout failed:', error);
         alert('Failed to logout. Please try again.');

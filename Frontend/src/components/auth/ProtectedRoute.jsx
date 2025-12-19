@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useAuth } from '../../context/AuthContext.jsx';
-import LoginForm from './LoginForm.jsx';
+import { Navigate } from 'react-router-dom'; // Add this import
 
 const ProtectedRoute = ({ children, requiredRole = null }) => {
   const { isAuthenticated, user, loading } = useAuth();
@@ -17,9 +17,9 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     );
   }
 
-  // Show login if not authenticated
+  // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return <LoginForm />;
+    return <Navigate to="/login" replace />;
   }
 
   // Check role requirement
@@ -43,6 +43,13 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
                 <span className="capitalize text-blue-600 font-medium ml-1">{user?.is_admin ? 'admin' : 'user'}</span>
               </p>
             </div>
+            {/* Add a button to redirect back to dashboard */}
+            <button 
+              onClick={() => window.location.href = '/dashboard'}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Go to Dashboard
+            </button>
           </div>
         </div>
       </div>

@@ -5,9 +5,11 @@ import { BookOpen, Eye, Globe, LogOut } from "lucide-react"
 import { useStats, useDomains, useCategories } from "../hooks/useStats.js"
 import { useAuth } from "../context/AuthContext.jsx"
 import PaperCard from "./PaperCard.jsx"
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth()
+  const navigate = useNavigate()
 
   const [papers, setPapers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -102,8 +104,8 @@ const Dashboard = ({ onRoleSwitch }) => {
           </div>
 
           <div className="header-right">
-            {user?.is_admin && onRoleSwitch && (
-              <button onClick={onRoleSwitch} className="add-paper-btn">
+            {user?.is_admin && (
+              <button onClick={() => navigate("/admin")} className="add-paper-btn">
                 Admin Panel
               </button>
             )}
