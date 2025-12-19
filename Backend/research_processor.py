@@ -11,7 +11,7 @@ load_dotenv()
 
 class ResearchProcessor:
     def __init__(self):
-        api_key = os.getenv('GROQ_API_KEY')
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise ValueError("GROQ_API_KEY not found in environment variables")
         self.groq_client = Groq(api_key=api_key)
