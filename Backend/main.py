@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends,status,HTTPException, File, UploadFile
-import models
-from database import engine, SessionLocal
+import models2
+from datafile import engine, SessionLocal
 from typing import Annotated
 from sqlalchemy.orm import Session
 from auth import get_current_user
@@ -17,13 +17,13 @@ app.include_router(paper_router)
 app.include_router(analytics_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React app URLs
+    allow_origins=["http://localhost:5173", "*"],  # React app URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-models.Base.metadata.create_all(bind=engine)
+models2.Base.metadata.create_all(bind=engine)
 
 def get_db():
     db=SessionLocal()
@@ -74,7 +74,7 @@ async def process_research_paper(
                 pass
         
         # Save to database with all fields
-        db_paper = models.research_papers_test(
+        db_paper = models2.research_papers_test(
             title=result.get('title', 'Unknown Title'),
             abstract=result.get('abstract', ''),
             summary=result.get('summary', ''),

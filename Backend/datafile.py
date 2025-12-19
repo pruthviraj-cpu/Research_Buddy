@@ -5,7 +5,12 @@ import os
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL  = os.getenv("DATABASE_URL")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not SQLALCHEMY_DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is missing")
+
+print("DATABASE_URL loaded:", SQLALCHEMY_DATABASE_URL[:30], "...")  # debug
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

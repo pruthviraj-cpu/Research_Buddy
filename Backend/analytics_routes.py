@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from typing import Annotated
-from database import SessionLocal
-from models import PaperAction
+from datafile import SessionLocal
+from models2 import PaperAction
 from auth import get_current_user
 
 analytics_router = APIRouter(

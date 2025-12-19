@@ -4,8 +4,8 @@ from fastapi import FastAPI, Depends, HTTPException, APIRouter
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
-from database import SessionLocal, engine
-from models import Users
+from datafile import SessionLocal, engine
+from models2 import Users
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError,jwt

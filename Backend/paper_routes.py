@@ -1,12 +1,12 @@
 from fastapi import APIRouter,status,Depends, UploadFile, File, Form, Query,HTTPException
 from typing import Optional
 from auth import get_current_user
-from database import SessionLocal
+from datafile import SessionLocal
 from sqlalchemy.orm import Session
-from models import research_papers_test
+from models2 import research_papers_test
 from typing import Annotated, List
 import json
-import models
+import models2
 from schemas import PaperUpdate
 
 paper_router = APIRouter(
@@ -63,7 +63,7 @@ async def get_research_papers(user: user_dependency,db: Annotated[Session, Depen
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
     
-    papers = db.query(models.research_papers_test).all()
+    papers = db.query(models2.research_papers_test).all()
     return {"papers": papers}
 
 # # Endpoint to get specific research paper
@@ -72,7 +72,7 @@ async def get_research_paper(paper_id: int, user: user_dependency, db: Annotated
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
 
-    paper = db.query(models.research_papers_test).filter(models.research_papers_test.paper_id == paper_id).first()
+    paper = db.query(models2.research_papers_test).filter(models2.research_papers_test.paper_id == paper_id).first()
     if not paper:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Paper not found")
     
