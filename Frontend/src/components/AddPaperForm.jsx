@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { X, Plus, Minus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useDomains, useCategories } from '../hooks/useStats.js';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth(); // Get token from auth context
@@ -85,7 +86,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
       formDataToSend.append('keywords', JSON.stringify(paperData.keywords));
       formDataToSend.append('pdfUrl', paperData.pdfUrl);
 
-      const response = await fetch('http://127.0.0.1:8000/papers/add-paper', {
+      const response = await fetch(`${API_BASE_URL}/papers/add-paper`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

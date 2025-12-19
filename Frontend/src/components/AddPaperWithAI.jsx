@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { X, Upload, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth();
@@ -52,7 +53,7 @@ const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
 
       const formData = new FormData();
       formData.append('file', pdfFile);
-      const response = await fetch('http://127.0.0.1:8000/process-research-paper/', {
+      const response = await fetch(`${API_BASE_URL}/process-research-paper/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

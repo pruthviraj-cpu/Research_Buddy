@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
 
+const API_BASE_URL = import.meta.env.VITE_API_URL ;
+
+
 //Auth reducer
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -115,7 +118,7 @@ const isTokenExpired = (token) => {
 };
 
 // API base URL
-// const API_BASE_URL = 'http://127.0.0.1:8000';
+// const API_BASE_URL = '${API_BASE_URL}';
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
@@ -155,7 +158,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     dispatch({ type: 'AUTH_LOADING' });
     try {
-      const response = await fetch(`http://127.0.0.1:8000/auth/`, {
+      const response = await fetch(`${API_BASE_URL}/auth/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -199,7 +202,7 @@ export const AuthProvider = ({ children }) => {
       formData.append('username', username);
       formData.append('password', password);
 
-      const response = await fetch(`http://127.0.0.1:8000/auth/token`, {
+      const response = await fetch(`${API_BASE_URL}/auth/token`, {
         method: 'POST',
         body: formData, // Using FormData instead of JSON
       });

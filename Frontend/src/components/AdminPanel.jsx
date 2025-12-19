@@ -5,6 +5,7 @@ import { useStats } from '../hooks/useStats.js';
 import AddPaperForm from './AddPaperForm.jsx';
 import AddPaperWithAI from './AddPaperWithAI.jsx';
 import { useNavigate } from "react-router-dom";
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const AdminPanel = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth();
@@ -27,7 +28,7 @@ const AdminPanel = ({ onRoleSwitch }) => {
     setError(null);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/papers/research-papers', {
+      const response = await fetch(`${API_BASE_URL}/papers/research-papers`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

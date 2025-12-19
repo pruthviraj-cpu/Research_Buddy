@@ -3,6 +3,8 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
 import { Edit2, Trash2, X, LogOut, BookOpen, Eye, Download, Plus, Minus } from "lucide-react"
 import { useNavigate } from "react-router-dom";
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 const ManagePapers = ({ onRoleSwitch }) => {
   const navigate = useNavigate()
 
@@ -36,7 +38,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch("http://127.0.0.1:8000/papers/research-papers", {
+      const res = await fetch(`${API_BASE_URL}/papers/research-papers`, {
         headers: getAuthHeaders(),
       })
       const data = await res.json()
@@ -139,7 +141,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
 
     try {
       setSubmitting(true)
-      const res = await fetch(`http://127.0.0.1:8000/papers/update-paper/${editingPaper.paper_id}`, {
+      const res = await fetch(`${API_BASE_URL}/papers/update-paper/${editingPaper.paper_id}`, {
         method: "PUT",
         headers: {
           ...getAuthHeaders(),
@@ -176,7 +178,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
   const handleDeleteClick = async (paper) => {
     if (window.confirm(`Are you sure you want to delete "${paper.title}"? This action cannot be undone.`)) {
       try {
-        const res = await fetch(`http://127.0.0.1:8000/papers/delete-paper/${paper.paper_id}`, {
+        const res = await fetch(`${API_BASE_URL}/papers/delete-paper/${paper.paper_id}`, {
           method: "DELETE",
           headers: getAuthHeaders(),
         })
