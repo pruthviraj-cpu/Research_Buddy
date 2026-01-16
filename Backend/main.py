@@ -17,7 +17,8 @@ app.include_router(paper_router)
 app.include_router(analytics_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "*"],  # React app URLs
+    allow_origins=["http://localhost:5173",
+                    "https://research-papaer-data-base-managemen.vercel.app"],  # React app URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

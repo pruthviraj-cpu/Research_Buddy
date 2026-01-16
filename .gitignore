@@ -10,4 +10,5 @@ Backend/.env
 *.sqlite3
 *.pyc
 .idea/
+Frontend/.env
 >>>>>>> development
