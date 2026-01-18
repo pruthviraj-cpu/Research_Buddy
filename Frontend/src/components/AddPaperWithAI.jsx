@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { X, Upload, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { toast } from 'react-toastify';
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth();

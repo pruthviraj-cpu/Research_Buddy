@@ -81,6 +81,7 @@ function App() {
         <AppContent />
       </AuthProvider>
 
+{/* for toasts in pages */}
       <ToastContainer
         position="top-right"
         autoclose={3000}

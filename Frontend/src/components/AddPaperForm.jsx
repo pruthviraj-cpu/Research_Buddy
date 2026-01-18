@@ -4,8 +4,8 @@ import { X, Plus, Minus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useDomains, useCategories } from '../hooks/useStats.js';
 import { toast } from 'react-toastify';
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth(); // Get token from auth context
@@ -75,7 +75,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
   const handleAddPaper = async (paperData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('title', paperData.title);
@@ -134,7 +134,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
         return newErrors;
       });
     }
-    
+
     // Clear general error
     if (error) {
       setError(null);
@@ -232,9 +232,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                validationErrors.title ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.title ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Enter paper title"
               disabled={loading}
             />
@@ -294,9 +293,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               <select
                 value={formData.domain}
                 onChange={(e) => handleInputChange('domain', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                  validationErrors.domain ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.domain ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                  }`}
                 disabled={loading}
               >
                 <option value="">Select Domain</option>
@@ -315,9 +313,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               <select
                 value={formData.category}
                 onChange={(e) => handleInputChange('category', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                  validationErrors.category ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-                }`}
+                className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.category ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                  }`}
                 disabled={loading}
               >
                 <option value="">Select Category</option>
@@ -339,9 +336,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               type="date"
               value={formData.publishDate}
               onChange={(e) => handleInputChange('publishDate', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                validationErrors.publishDate ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.publishDate ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                }`}
               disabled={loading}
             />
             {validationErrors.publishDate && (
@@ -358,9 +354,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               value={formData.abstract}
               onChange={(e) => handleInputChange('abstract', e.target.value)}
               rows={4}
-              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
-                validationErrors.abstract ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${validationErrors.abstract ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Enter paper abstract"
               disabled={loading}
             />
@@ -378,9 +373,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               value={formData.summary}
               onChange={(e) => handleInputChange('summary', e.target.value)}
               rows={4}
-              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${
-                validationErrors.summary ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none ${validationErrors.summary ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                }`}
               placeholder="Enter paper summary"
               disabled={loading}
             />
@@ -440,9 +434,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
               type="url"
               value={formData.pdfUrl}
               onChange={(e) => handleInputChange('pdfUrl', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                validationErrors.pdfUrl ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
-              }`}
+              className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.pdfUrl ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'
+                }`}
               placeholder="https://example.com/paper.pdf"
               disabled={loading}
             />
@@ -468,7 +461,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
             >
               Cancel
             </button>
-            
+
             {/* Add Paper with AI Button */}
             <button
               type="button"
@@ -484,7 +477,7 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
             >
               Add Paper with AI
             </button>
-            
+
             {/* Regular Add Paper Button */}
             <button
               type="submit"

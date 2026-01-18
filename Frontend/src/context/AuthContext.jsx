@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
 
-// const API_BASE_URL = import.meta.env.VITE_API_URL ;
-const API_BASE_URL = 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL ;
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 
 //Auth reducer
@@ -48,13 +48,22 @@ const authReducer = (state, action) => {
   }
 };
 
+// const initialState = {
+//   user: null,
+//   token: null,
+//   isAuthenticated: false,
+//   loading: false,
+//   error: null
+// };
+
 const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  loading: false,
+  loading: true,   // ✅ FIX
   error: null
 };
+
 
 // In-memory token storage (fallback when localStorage isn't available)
 let memoryToken = null;

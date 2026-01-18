@@ -147,16 +147,48 @@ const LoginForm = ({ onSuccess }) => {
           {mode === 'register' && (
             <div>
               <label htmlFor="confirmPassword">Confirm Password</label>
-              <div className="input-group">
-                <Lock size={18} />
+              <div style={{ position: 'relative' }}>
+                <Lock
+                  size={18}
+                  style={{
+                    position: 'absolute',
+                    left: '16px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#94A3B8',
+                    pointerEvents: 'none'
+                  }}
+                />
                 <input
                   id="confirmPassword"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   className="input-field"
+                  style={{
+                    paddingLeft: '48px',
+                    paddingRight: '44px' // space for eye icon
+                  }}
                   placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(showPassword => !showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',        // ✅ correct anchor
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                    color: '#94A3B8'
+                  }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
               {validationErrors.confirmPassword && <p className="error">{validationErrors.confirmPassword}</p>}
             </div>
@@ -177,7 +209,8 @@ const LoginForm = ({ onSuccess }) => {
                   onClick={() => handleInputChange('role', 'admin')}
                 ><Shield size={18} />Admin</button>
               </div>
-              <p>Selected Role: {formData.role}</p>
+              {/* just for debugging */}
+              {/* <p>Selected Role: {formData.role}</p> */}
             </div>
           )}
 

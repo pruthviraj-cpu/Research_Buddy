@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { BookOpen, Eye, Globe, LogOut } from "lucide-react"
 import { useStats, useDomains, useCategories } from "../hooks/useStats.js"
@@ -8,8 +6,10 @@ import PaperCard from "./PaperCard.jsx"
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify"
 import ViewPaperModal from "./ViewPaperModal.jsx"
-// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_BASE_URL = 'http://127.0.0.1:8000';
+import { showConfirmToast } from "../utils/confirmToast.jsx"
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const Dashboard = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth()
@@ -73,15 +73,33 @@ const Dashboard = ({ onRoleSwitch }) => {
     setSelectedPaper(null)
   }
 
+  // const handleLogout = async () => {
+  //   if (window.confirm("Are you sure you want to logout?")) {
+  //     try {
+  //       await logout()
+  //     } catch (error) {
+  //       console.error("Logout failed:", error)
+  //     }
+  //   }
+  // }
+
   const handleLogout = async () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      try {
-        await logout()
-      } catch (error) {
-        console.error("Logout failed:", error)
+    showConfirmToast({
+      title: "Confirm Logout",
+      message: "Are you sure you want to logout?",
+      confirmText: "Logout",
+      confirmColor: "bg-red-600",
+      onConfirm: async () => {
+        try {
+          await logout();
+          toast.success('Logged out successfully');
+          navigate('/login');
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
       }
-    }
-  }
+    })
+  };
 
   const handleDownloadPaper = (pdfUrl, title) => {
     if (pdfUrl) {
