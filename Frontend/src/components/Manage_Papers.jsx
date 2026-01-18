@@ -3,7 +3,9 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
 import { Edit2, Trash2, X, LogOut, BookOpen, Eye, Download, Plus, Minus } from "lucide-react"
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { toast } from "react-toastify";
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const ManagePapers = ({ onRoleSwitch }) => {
   const navigate = useNavigate()
@@ -166,7 +168,8 @@ const ManagePapers = ({ onRoleSwitch }) => {
 
       setPapers(papers.map((p) => (p.paper_id === editingPaper.paper_id ? { ...p, ...formData } : p)))
       handleCloseModal()
-      alert("Paper updated successfully!")
+      // alert("Paper updated successfully!")
+      toast.success("Paper updated successfully!")
     } catch (err) {
       console.error(err)
       setValidationErrors({ submit: err.message })

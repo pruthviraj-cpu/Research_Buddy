@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 
-function PasswordInput({ value, onChange }) {
-  const [showPassword, setShowPassword] = useState(false);
+function PasswordInput({ value, onChange, showPassword, toggleShowPassword }) {
+  // <PasswordInput
+  //               value={formData.password}
+  //               onChange={(e) => handleInputChange('password', e.target.value)}
+  //               showPassword={showPassword}
+  //               toggleShowPassword={() => setShowPassword(s => !s)}
+  //             />
 
   return (
     <div className="input-group" style={{ position: 'relative' }}>
@@ -20,9 +25,9 @@ function PasswordInput({ value, onChange }) {
       />
       <button
         type="button"
-        onClick={() => setShowPassword(show => !show)}
-        className="toggle-password"
-        style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#94A3B8' }}
+        onClick={toggleShowPassword}
+        // className="toggle-password"
+        style={{ position: 'absolute', right: '48px', top: '50%', background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: '#94A3B8' }}
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}

@@ -3,7 +3,8 @@ import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
 import { Trash2, X, LogOut, BookOpen, RefreshCw, Eye, Download, PlusCircle , Minus, Edit2  } from "lucide-react"
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const PaperAnalytics = () => {
   const { getAuthHeaders, user, logout, token } = useAuth()

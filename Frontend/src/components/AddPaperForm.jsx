@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { X, Plus, Minus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useDomains, useCategories } from '../hooks/useStats.js';
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { toast } from 'react-toastify';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth(); // Get token from auth context
@@ -104,7 +106,8 @@ const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
         throw new Error(errorData.detail || 'Failed to add paper');
       }
     } catch (err) {
-      console.error('Error adding paper:', err);
+      // console.error('Error adding paper:', err);
+      toast.error(`Error adding paper: ${err.message}`);
       setError(err.message);
     } finally {
       setLoading(false);

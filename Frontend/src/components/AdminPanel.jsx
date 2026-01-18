@@ -5,7 +5,9 @@ import { useStats } from '../hooks/useStats.js';
 import AddPaperForm from './AddPaperForm.jsx';
 import AddPaperWithAI from './AddPaperWithAI.jsx';
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import ViewPaperModal from './ViewPaperModal.jsx';
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AdminPanel = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth();
@@ -15,8 +17,11 @@ const AdminPanel = ({ onRoleSwitch }) => {
 
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showAddAIForm, setShowAddAIForm] = useState(false); 
+  const [showAddAIForm, setShowAddAIForm] = useState(false);
 
+  const [selectedPaper, setSelectedPaper] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+  
   // NEW STATES
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -236,6 +241,13 @@ const AdminPanel = ({ onRoleSwitch }) => {
         isOpen={showAddAIForm}
         onClose={handleAIFormClose}
         onSuccess={handleAIFormSuccess}
+      />
+
+      {/* ✅ ADD THIS */}
+      <ViewPaperModal
+        isOpen={showViewModal}
+        onClose={handleCloseViewModal}
+        paper={selectedPaper}
       />
     </div >
   );

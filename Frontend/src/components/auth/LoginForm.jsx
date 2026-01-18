@@ -4,6 +4,7 @@ import { Eye, EyeOff, User, Lock, Shield, Mail, UserPlus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import PasswordInput from './PasswordInput.jsx';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const LoginForm = ({ onSuccess }) => {
   const { login, register, loading, error, clearError } = useAuth();
@@ -64,11 +65,13 @@ const LoginForm = ({ onSuccess }) => {
           role: formData.role
         });
         // After successful registration, switch to login
-        alert('Account created successfully! Please log in.');
+        // alert('Account created successfully! Please log in.');
+        toast.success('Account created successfully! Please log in.');
         switchMode('login');
       } else if (mode === 'reset') {
         // Password reset not implemented in backend
-        alert('Password reset functionality is not available yet.');
+        toast.info('Password reset functionality is not available yet.');
+        // alert('Password reset functionality is not available yet.');
       }
     } catch (err) {
       // Error is handled by AuthContext
@@ -115,10 +118,20 @@ const LoginForm = ({ onSuccess }) => {
                 onChange={(e) => handleInputChange('username', e.target.value)}
               />
             </div>
+            <div>
+              <label htmlFor="password">Password</label>
+              <PasswordInput
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+                showPassword={showPassword}
+                toggleShowPassword={() => setShowPassword(showPassword => !showPassword)}
+              />
+              {validationErrors.password && <p className="error">{validationErrors.password}</p>}
+            </div>
             {validationErrors.username && <p className="error">{validationErrors.username}</p>}
           </div>
 
-          {mode !== 'reset' && (
+          {/* {mode !== 'reset' && (
             <div>
               <label htmlFor="password">Password</label>
               <PasswordInput
@@ -129,7 +142,7 @@ const LoginForm = ({ onSuccess }) => {
               />
               {validationErrors.password && <p className="error">{validationErrors.password}</p>}
             </div>
-          )}
+          )} */}
 
           {mode === 'register' && (
             <div>
@@ -185,15 +198,15 @@ const LoginForm = ({ onSuccess }) => {
           {mode === 'login' && (
             <>
               <p>Don't have an account? <button onClick={() => switchMode('register')}>Sign up</button></p>
-              <p>Forgot your password? <button onClick={() => switchMode('reset')}>Reset it</button></p>
+              {/* <p>Forgot your password? <button onClick={() => switchMode('reset')}>Reset it</button></p> */}
             </>
           )}
           {mode === 'register' && (
             <p>Already have an account? <button onClick={() => switchMode('login')}>Sign in</button></p>
           )}
-          {mode === 'reset' && (
+          {/* {mode === 'reset' && (
             <p>Remember? <button onClick={() => switchMode('login')}>Sign in</button></p>
-          )}
+          )} */}
         </div>
       </div>
     </div>

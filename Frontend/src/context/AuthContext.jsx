@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ;
+// const API_BASE_URL = import.meta.env.VITE_API_URL ;
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 
 //Auth reducer
@@ -12,22 +13,22 @@ const authReducer = (state, action) => {
     case 'AUTH_LOADING':
       return { ...state, loading: true, error: null };
     case 'AUTH_SUCCESS':
-      return { 
-        ...state, 
-        loading: false, 
-        user: action.payload.user, 
+      return {
+        ...state,
+        loading: false,
+        user: action.payload.user,
         token: action.payload.token,
-        isAuthenticated: !!action.payload.token, 
-        error: null 
+        isAuthenticated: !!action.payload.token,
+        error: null
       };
     case 'AUTH_ERROR':
-      return { 
-        ...state, 
-        loading: false, 
-        error: action.payload, 
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
         isAuthenticated: false,
         user: null,
-        token: null 
+        token: null
       };
     case 'LOGOUT':
       return {
@@ -127,28 +128,26 @@ export const AuthProvider = ({ children }) => {
     // Check for stored token on app initialization
     const initializeAuth = () => {
       const storedToken = getStoredToken();
-      
+
       if (storedToken && !isTokenExpired(storedToken)) {
         const decoded = decodeJWT(storedToken);
-        // Create user object from JWT payload (matching backend structure)
         const user = {
           id: decoded.id,
           username: decoded.sub,
           is_admin: decoded.is_admin
         };
-        dispatch({ 
-          type: 'AUTH_SUCCESS', 
-          payload: { 
-            token: storedToken, 
-            user: user 
-          } 
+
+        dispatch({
+          type: 'AUTH_SUCCESS',
+          payload: { token: storedToken, user }
         });
       } else {
-        if (storedToken) {
-          removeStoredToken();
-        }
-        dispatch({ type: 'SET_LOADING', payload: false });
+        removeStoredToken();
+        dispatch({ type: 'LOGOUT' });
       }
+
+      // ✅ THIS IS CRITICAL
+      dispatch({ type: 'SET_LOADING', payload: false });
     };
 
     initializeAuth();
@@ -185,7 +184,7 @@ export const AuthProvider = ({ children }) => {
       // Note: Your backend doesn't return token on registration
       // User needs to login separately after registration
       dispatch({ type: 'SET_LOADING', payload: false });
-      
+
       return { message: 'User created successfully. Please login.' };
     } catch (error) {
       dispatch({ type: 'AUTH_ERROR', payload: error.message });
@@ -231,7 +230,7 @@ export const AuthProvider = ({ children }) => {
 
       setStoredToken(token);
       dispatch({ type: 'AUTH_SUCCESS', payload: { token, user } });
-      
+
       return user;
     } catch (error) {
       dispatch({ type: 'AUTH_ERROR', payload: error.message });
@@ -246,7 +245,7 @@ export const AuthProvider = ({ children }) => {
       // Your backend doesn't have a logout endpoint, so just clear local storage
       removeStoredToken();
       dispatch({ type: 'LOGOUT' });
-      
+
       // Create an event to notify about logout
       window.dispatchEvent(new Event('auth-logout'));
     } catch (error) {

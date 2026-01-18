@@ -6,7 +6,10 @@ import { useStats, useDomains, useCategories } from "../hooks/useStats.js"
 import { useAuth } from "../context/AuthContext.jsx"
 import PaperCard from "./PaperCard.jsx"
 import { useNavigate } from "react-router-dom";
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { toast } from "react-toastify"
+import ViewPaperModal from "./ViewPaperModal.jsx"
+// const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const Dashboard = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth()
@@ -17,6 +20,9 @@ const Dashboard = ({ onRoleSwitch }) => {
   const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterDomain, setFilterDomain] = useState("All")
+
+  const [selectedPaper, setSelectedPaper] = useState(null)
+  const [showViewModal, setShowViewModal] = useState(false)
 
   const { stats, loading: statsLoading } = useStats()
   const { domains } = useDomains()
@@ -37,7 +43,7 @@ const Dashboard = ({ onRoleSwitch }) => {
 
       if (response.ok) {
         const result = await response.json()
-        console.log("Fetched papers:", result)
+        // console.log("Fetched papers:", result)
 
         // ensure it's always an array
         setPapers(Array.isArray(result) ? result : result.papers || [])
@@ -58,8 +64,13 @@ const Dashboard = ({ onRoleSwitch }) => {
     fetchPapers()
   }, [])
 
-  const handleViewPaper = (paperId) => {
-    console.log("View count increment not yet wired:", paperId)
+  const handleViewPaper = (paper) => {
+    setSelectedPaper(paper)
+    setShowViewModal(true)
+  }
+  const handleCloseViewModal = () => {
+    setShowViewModal(false)
+    setSelectedPaper(null)
   }
 
   const handleLogout = async () => {
@@ -76,7 +87,8 @@ const Dashboard = ({ onRoleSwitch }) => {
     if (pdfUrl) {
       window.open(pdfUrl, "_blank")
     } else {
-      alert(`Download link not available for: ${title}`)
+      // alert(`Download link not available for: ${title}`)
+      toast.info(`Download link feature will be available soon for: ${title}`);
     }
   }
 
@@ -130,20 +142,20 @@ const Dashboard = ({ onRoleSwitch }) => {
           />
 
 
-            <div className="flex flex-wrap gap-2">
-              {["All", ...(domains || [])].map((domain) => (
-                <button
-                  key={domain}
-                  onClick={() => setFilterDomain(domain)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${filterDomain === domain
-                      ? "bg-slate-600 text-white" 
-                      : "bg-white-700 dark:bg-slate-200 text-black hover:bg-slate-600"
-                    }`}
-                >
-                  {domain}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-2">
+            {["All", ...(domains || [])].map((domain) => (
+              <button
+                key={domain}
+                onClick={() => setFilterDomain(domain)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${filterDomain === domain
+                  ? "bg-slate-600 text-white"
+                  : "bg-white-700 dark:bg-slate-200 text-black hover:bg-slate-600"
+                  }`}
+              >
+                {domain}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Stats Section */}
@@ -193,9 +205,9 @@ const Dashboard = ({ onRoleSwitch }) => {
             <div className="papers-grid">
               {filteredPapers.map((paper) => (
                 <PaperCard
-                  key={paper.id}
+                  key={paper.paper_id}
                   paper={paper}
-                  onView={() => handleViewPaper(paper.id)}
+                  onView={() => handleViewPaper(paper)}
                   onDownload={() => handleDownloadPaper(paper.pdfUrl, paper.title)}
                 />
               ))}
@@ -203,6 +215,12 @@ const Dashboard = ({ onRoleSwitch }) => {
           )}
         </div>
       </main>
+      {/* ✅ ADDED: View Paper Modal */}
+      <ViewPaperModal
+        isOpen={showViewModal}
+        onClose={handleCloseViewModal}
+        paper={selectedPaper}
+      />
     </div>
   )
 }
