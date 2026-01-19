@@ -5,6 +5,8 @@ import { Trash2, X, LogOut, BookOpen, RefreshCw, Eye, Download, PlusCircle, Minu
 import { useNavigate } from "react-router-dom";
 import { showConfirmToast } from "../utils/confirmToast.jsx";
 import { toast } from "react-toastify";
+import Loader from "./Loader/Loader.jsx";
+import ErrorState from "./Loader/NotFound.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 // const API_BASE_URL = 'http://127.0.0.1:8000';
 
@@ -239,17 +241,11 @@ const PaperAnalytics = () => {
         {/* Analytics Table Section */}
         <div className="papers-section">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-slate-400">Loading analytics data...</p>
-            </div>
+            <Loader />
           ) : error ? (
-            <div className="bg-red-900/20 border border-red-800 text-red-400 rounded-lg p-4">
-              <p className="font-semibold">Error: {error}</p>
-            </div>
+            <ErrorState />
           ) : filteredActions.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-slate-400">No paper actions found.</p>
-            </div>
+            <ErrorState />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">

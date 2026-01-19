@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify"
 import ViewPaperModal from "./ViewPaperModal.jsx"
 import { showConfirmToast } from "../utils/confirmToast.jsx"
+import Loader from "./Loader/Loader.jsx"
+import ErrorState from "./Loader/NotFound.jsx"
+import ErrorState2 from "./Loader/NotFoundPapers.jsx"
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 // const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -214,11 +217,11 @@ const Dashboard = ({ onRoleSwitch }) => {
         {/* Papers Grid */}
         <div className="papers-section">
           {loading ? (
-            <p>Loading papers...</p>
+              <Loader />
           ) : error ? (
-            <p className="error-text">{error}</p>
+            <ErrorState />
           ) : filteredPapers.length === 0 ? (
-            <p>No papers found.</p>
+            <ErrorState2 />
           ) : (
             <div className="papers-grid">
               {filteredPapers.map((paper) => (

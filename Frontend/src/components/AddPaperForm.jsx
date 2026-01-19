@@ -4,8 +4,8 @@ import { X, Plus, Minus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useDomains, useCategories } from '../hooks/useStats.js';
 import { toast } from 'react-toastify';
+import Loader from './Loader/Loader.jsx';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth(); // Get token from auth context
