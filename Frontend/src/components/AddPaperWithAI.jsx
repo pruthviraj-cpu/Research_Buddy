@@ -2,7 +2,9 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { X, Upload, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import { toast } from 'react-toastify';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
   const { token } = useAuth();
@@ -27,6 +29,7 @@ const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
   const handleUpload = async () => {
     if (!pdfFile) {
       setError('Please select a PDF file');
+      toast.error('Please select a PDF file');
       return;
     }
 
@@ -40,6 +43,7 @@ const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
       setUploading(false);
     } catch (err) {
       setError('Failed to upload PDF. Please try again.');
+      toast.error('Failed to upload PDF. Please try again.');
       setUploading(false);
     }
   };
@@ -71,6 +75,7 @@ const AddPaperWithAI = ({ isOpen, onClose, onSuccess }) => {
       
     } catch (err) {
       setError('Failed to generate paper. Please try again.');
+      toast.error('Failed to generate paper. Please try again.');
       setGenerating(false);
     }
   };

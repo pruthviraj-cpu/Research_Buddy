@@ -5,22 +5,40 @@ import { useStats } from '../hooks/useStats.js';
 import AddPaperForm from './AddPaperForm.jsx';
 import AddPaperWithAI from './AddPaperWithAI.jsx';
 import { useNavigate } from "react-router-dom";
+import ViewPaperModal from './ViewPaperModal.jsx';
+import { showConfirmToast } from "../utils/confirmToast"
+import { toast } from 'react-toastify';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AdminPanel = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refetch: refetchStats } = useStats();
 
-
   const [activeTab, setActiveTab] = useState('overview');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [showAddAIForm, setShowAddAIForm] = useState(false); 
+  const [showAddAIForm, setShowAddAIForm] = useState(false);
+
+  const [selectedPaper, setSelectedPaper] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
 
   // NEW STATES
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // ✅ CORRECT: View paper handler - opens modal with paper data
+  const handleViewPaper = (paper) => {
+    setSelectedPaper(paper)
+    setShowViewModal(true)
+  }
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false)
+    setSelectedPaper(null)
+  }
 
   // 🔹 Fetch Papers Function
   const fetchPapers = async () => {
@@ -57,13 +75,21 @@ const AdminPanel = ({ onRoleSwitch }) => {
   }, []);
 
   const handleLogout = async () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      try {
-        await logout();
-      } catch (error) {
-        console.error('Logout failed:', error);
+    showConfirmToast({
+      title: "Confirm Logout",
+      message: "Are you sure you want to logout?",
+      confirmText: "Logout",
+      confirmColor: "bg-red-600",
+      onConfirm: async () => {
+        try {
+          await logout();
+          toast.success('Logged out successfully');
+          navigate('/login');
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
       }
-    }
+    })
   };
 
   const handleAddPaper = () => {
@@ -236,6 +262,13 @@ const AdminPanel = ({ onRoleSwitch }) => {
         isOpen={showAddAIForm}
         onClose={handleAIFormClose}
         onSuccess={handleAIFormSuccess}
+      />
+
+      {/* ✅ ADD THIS */}
+      <ViewPaperModal
+        isOpen={showViewModal}
+        onClose={handleCloseViewModal}
+        paper={selectedPaper}
       />
     </div >
   );

@@ -119,7 +119,7 @@ const PaperCard = ({ paper, onView, onDownload }) => {
 
 PaperCard.propTypes = {
   paper: PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    // id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     title: PropTypes.string.isRequired,
     domain: PropTypes.string,
     authors: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
