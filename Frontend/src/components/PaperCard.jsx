@@ -64,7 +64,7 @@ const PaperCard = ({ paper, onView, onDownload }) => {
       <div className="paper-meta">
         <div className="paper-meta-item">
           <Calendar />
-          <span>{formatDate(publishedDate)}</span>
+          <span>{formatDate(paper.publication_date)}</span>
         </div>
         <div className="paper-meta-item">
           <FileText />
@@ -89,11 +89,6 @@ const PaperCard = ({ paper, onView, onDownload }) => {
       
       {/* Footer */}
       <div className="paper-footer">
-        {/* View Count */}
-        <div className="paper-stats">
-          <Eye />
-          <span>{views ? views.toLocaleString() : 0} views</span>
-        </div>
         
         {/* Actions */}
         <div className="paper-actions">

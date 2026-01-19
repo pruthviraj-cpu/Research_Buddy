@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import ViewPaperModal from './ViewPaperModal.jsx';
 import { showConfirmToast } from "../utils/confirmToast"
 import { toast } from 'react-toastify';
+import Loader from './Loader/Loader.jsx';
+import ErrorState from './Loader/NotFound.jsx';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 // const API_BASE_URL = 'http://127.0.0.1:8000';
@@ -144,6 +146,9 @@ const AdminPanel = ({ onRoleSwitch }) => {
           </div>
 
           <div className="header-right">
+            <button onClick={() => navigate("/dashboard")} className="add-paper-btn">
+              Back to Dashboard
+            </button>
             <button onClick={handleAddPaper} className="add-paper-btn">
               <Plus size={18} />
               Add Paper
@@ -228,26 +233,32 @@ const AdminPanel = ({ onRoleSwitch }) => {
         </div >
 
         {/* Recently Added Papers */}
-        < div className="recent-papers-section" >
+        <div className="recent-papers-section">
           <h2>Recently Added Papers</h2>
 
-          {loading && <p>Loading papers...</p>}
-          {error && <p className="error-text">{error}</p>}
-
-          <div className="recent-papers-grid">
-            {Array.isArray(papers) && papers.length > 0 ? (
-              papers.map(paper => (
+          {/* Loading State */}
+          {loading ? (
+            <Loader />
+          ) : error ? (
+            /* Error State */
+            <p className="error-text">{error}</p>
+          ) : Array.isArray(papers) && papers.length > 0 ? (
+            /* Data State */
+            <div className="recent-papers-grid">
+              {papers.map(paper => (
                 <div key={paper.id} className="recent-paper-card">
                   <div className="paper-category">{paper.category}</div>
                   <h3 className="paper-title">{paper.title}</h3>
                   <div className="paper-date">{paper.date}</div>
                 </div>
-              ))
-            ) : (
-              <p>No papers found</p>
-            )}
-          </div>
-        </div >
+              ))}
+            </div>
+          ) : (
+            /* Empty State */
+            <ErrorState />
+          )}
+        </div>
+
       </main >
 
       {/* ✅ Regular Add Paper Form */}
