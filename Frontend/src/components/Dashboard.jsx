@@ -236,7 +236,6 @@ const Dashboard = ({ onRoleSwitch }) => {
           )}
         </div>
       </main>
-      {/* ✅ ADDED: View Paper Modal */}
       <ViewPaperModal
         isOpen={showViewModal}
         onClose={handleCloseViewModal}
