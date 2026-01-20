@@ -8,21 +8,21 @@ import Loader from './Loader/Loader.jsx';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const AddPaperForm = ({ isOpen, onClose, onSuccess }) => {
-  // const { token } = useAuth(); // Get token from auth context
-  // const { domains } = useDomains();
-  // const { categories } = useCategories();
+  const { token } = useAuth(); // Get token from auth context
+  const { domains } = useDomains();
+  const { categories } = useCategories();
 
-  // const [formData, setFormData] = useState({
-  //   title: '',
-  //   authors: [''],
-  //   domain: '',
-  //   category: '',
-  //   publishDate: '',
-  //   abstract: '',
-  //   summary: '',
-  //   keywords: [''],
-  //   pdfUrl: ''
-  // });
+  const [formData, setFormData] = useState({
+    title: '',
+    authors: [''],
+    domain: '',
+    category: '',
+    publishDate: '',
+    abstract: '',
+    summary: '',
+    keywords: [''],
+    pdfUrl: ''
+  });
 
   const [validationErrors, setValidationErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -511,3 +511,4 @@ AddPaperForm.propTypes = {
 
 
 export default AddPaperForm;
+
