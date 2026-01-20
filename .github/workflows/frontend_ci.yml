@@ -3,10 +3,16 @@ name: Frontend CI
 on:
   pull_request:
     branches: [ main ]
+    paths:
+      - "Frontend/**"
 
 jobs:
   frontend-ci:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Frontend
 
     steps:
       - name: Checkout repository
@@ -17,6 +23,7 @@ jobs:
         with:
           node-version: 18
           cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
 
       - name: Install dependencies
         run: npm install

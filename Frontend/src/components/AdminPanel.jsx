@@ -12,7 +12,6 @@ import Loader from './Loader/Loader.jsx';
 import ErrorState from './Loader/NotFound.jsx';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const AdminPanel = ({ onRoleSwitch }) => {
   const { user, logout, token } = useAuth();
