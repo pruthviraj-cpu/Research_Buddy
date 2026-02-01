@@ -6,6 +6,7 @@ import AdminPanel from '../components/AdminPanel.jsx';
 import ManagePapers from '../components/Manage_Papers.jsx';
 import PaperAnalytics from '../components/PaperAnalytics.jsx';
 import LoginForm from '../components/auth/LoginForm.jsx'; // Add this import
+import { ToastContainer } from 'react-toastify';
 
 // Main App Component
 const AppContent = () => {
@@ -16,7 +17,7 @@ const AppContent = () => {
       <Routes>
         {/* Public login route */}
         <Route path="/login" element={<LoginForm />} />
-        
+
         {/* Redirect root to login if not authenticated, or dashboard if authenticated */}
         <Route
           path="/"
@@ -74,9 +75,23 @@ const AppContent = () => {
 // Root App with Auth Provider
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <>
+
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+
+{/* for toasts in pages */}
+      <ToastContainer
+        position="top-right"
+        autoclose={3000}
+        hidePogressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggle
+        toastClassname="bg-gray-800 text-white font-semibold px-6 py-3 rounded-lg shadow-lg"
+        bodyClassName="text-sm"
+      /></>
   );
 }
 

@@ -3,6 +3,11 @@ import { useState, useEffect } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
 import { Edit2, Trash2, X, LogOut, BookOpen, Eye, Download, Plus, Minus } from "lucide-react"
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import ViewPaperModal from "./ViewPaperModal.jsx";
+import { showConfirmToast } from "../utils/confirmToast";
+import Loader from "./Loader/Loader.jsx";
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const ManagePapers = ({ onRoleSwitch }) => {
@@ -23,12 +28,25 @@ const ManagePapers = ({ onRoleSwitch }) => {
     category: "",
     publication_date: "",
     abstract: "",
-    summary:"",
+    summary: "",
     keywords: [""],
     pdf_url: "",
   })
   const [validationErrors, setValidationErrors] = useState({})
   const [submitting, setSubmitting] = useState(false)
+
+  const [selectedPaper, setSelectedPaper] = useState(null)
+  const [showViewModal, setShowViewModal] = useState(false)
+
+  const handleViewPaper = (paper) => {
+    setSelectedPaper(paper)
+    setShowViewModal(true)
+  }
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false)
+    setSelectedPaper(null)
+  }
 
   useEffect(() => {
     fetchPapers()
@@ -166,7 +184,8 @@ const ManagePapers = ({ onRoleSwitch }) => {
 
       setPapers(papers.map((p) => (p.paper_id === editingPaper.paper_id ? { ...p, ...formData } : p)))
       handleCloseModal()
-      alert("Paper updated successfully!")
+      // alert("Paper updated successfully!")
+      toast.success("Paper updated successfully!")
     } catch (err) {
       console.error(err)
       setValidationErrors({ submit: err.message })
@@ -175,36 +194,54 @@ const ManagePapers = ({ onRoleSwitch }) => {
     }
   }
 
-  const handleDeleteClick = async (paper) => {
-    if (window.confirm(`Are you sure you want to delete "${paper.title}"? This action cannot be undone.`)) {
-      try {
-        const res = await fetch(`${API_BASE_URL}/papers/delete-paper/${paper.paper_id}`, {
-          method: "DELETE",
-          headers: getAuthHeaders(),
-        })
+  const handleDeleteClick = (paper) => {
+    showConfirmToast({
+      title: `Delete "${paper.title}"?`,
+      message: "This action cannot be undone.",
+      confirmText: "Delete",
+      confirmColor: "bg-red-600",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(
+            `${API_BASE_URL}/papers/delete-paper/${paper.paper_id}`,
+            {
+              method: "DELETE",
+              headers: getAuthHeaders(),
+            }
+          )
 
-        if (!res.ok) {
-          throw new Error("Failed to delete paper")
+          if (!res.ok) throw new Error("Failed to delete paper")
+
+          setPapers((prev) =>
+            prev.filter((p) => p.paper_id !== paper.paper_id)
+          )
+
+          toast.success("Paper deleted successfully!")
+        } catch (err) {
+          console.error(err)
+          toast.error("Error deleting paper")
         }
-
-        setPapers(papers.filter((p) => p.paper_id !== paper.paper_id))
-        alert("Paper deleted successfully!")
-      } catch (err) {
-        console.error(err)
-        alert("Error deleting paper: " + err.message)
-      }
-    }
+      },
+    })
   }
 
   const handleLogout = async () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      try {
-        await logout()
-      } catch (error) {
-        console.error("Logout failed:", error)
+    showConfirmToast({
+      title: "Confirm Logout",
+      message: "Are you sure you want to logout?",
+      confirmText: "Logout",
+      confirmColor: "bg-red-600",
+      onConfirm: async () => {
+        try {
+          await logout();
+          toast.success('Logged out successfully');
+          navigate('/login');
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
       }
-    }
-  }
+    })
+  };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -248,7 +285,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
       category: "",
       publish_date: "",
       abstract: "",
-      summary:"",
+      summary: "",
       keywords: [""],
       pdf_url: "",
     })
@@ -308,7 +345,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
                     <Eye className="w-6 h-6" />
                   </div>
                   <div className="stat-content">
-                    <div className="stat-number">{stats.totalViews.toLocaleString()}</div>
+                    <div className="stat-number">6,454</div>
                     <div className="stat-label">Total Views</div>
                   </div>
                 </div>
@@ -332,9 +369,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
         {/* Papers Grid */}
         <div className="papers-section">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-slate-600 dark:text-slate-400">Loading papers...</p>
-            </div>
+            <Loader />
           ) : error ? (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
               <p className="error-text">{error}</p>
@@ -357,13 +392,13 @@ const ManagePapers = ({ onRoleSwitch }) => {
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      {/* <button
+                      <button
                         onClick={() => handleDeleteClick(paper)}
                         className="icon-btn icon-btn-delete"
                         title="Delete paper"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button> */}
+                      </button>
                     </div>
                   </div>
 
@@ -377,7 +412,7 @@ const ManagePapers = ({ onRoleSwitch }) => {
                       <span className="paper-authors">
                         {Array.isArray(paper.authors)
                           ? paper.authors.slice(0, 2).join(", ") +
-                            (paper.authors.length > 2 ? ", +" + (paper.authors.length - 2) + " more" : "")
+                          (paper.authors.length > 2 ? ", +" + (paper.authors.length - 2) + " more" : "")
                           : paper.authors}
                       </span>
                     </div>
@@ -407,21 +442,11 @@ const ManagePapers = ({ onRoleSwitch }) => {
                   )}
 
                   <div className="paper-footer">
-                    <span className="flex items-center gap-1 text-sm text-slate-600 dark:text-slate-400">
-                      <Eye className="w-4 h-4" />
-                      {paper.views || 0} views
-                    </span>
                     <div className="paper-actions">
-                      <button className="view-btn">
+                      <button className="view-btn flex items-center gap-2" onClick={() => handleViewPaper(paper)}>
                         <Eye className="w-4 h-4" />
                         View
                       </button>
-                      {paper.pdf_url && (
-                        <button className="download-btn">
-                          <Download className="w-4 h-4" />
-                          Download
-                        </button>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -430,6 +455,12 @@ const ManagePapers = ({ onRoleSwitch }) => {
           )}
         </div>
       </main>
+      {/* Paper modal */}
+      <ViewPaperModal
+        isOpen={showViewModal}
+        onClose={handleCloseViewModal}
+        paper={selectedPaper}
+      />
 
       {showModal && editingPaper && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -457,11 +488,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                    validationErrors.title
-                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.title
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300"
+                    }`}
                   placeholder="Enter paper title"
                   disabled={submitting}
                 />
@@ -518,11 +548,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                     type="text"
                     value={formData.domain}
                     onChange={(e) => handleInputChange("domain", e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                      validationErrors.domain
-                        ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                        : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.domain
+                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300"
+                      }`}
                     placeholder="e.g., Computer Science"
                     disabled={submitting}
                   />
@@ -536,11 +565,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                     type="text"
                     value={formData.category}
                     onChange={(e) => handleInputChange("category", e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                      validationErrors.category
-                        ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                        : "border-gray-300"
-                    }`}
+                    className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.category
+                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                      : "border-gray-300"
+                      }`}
                     placeholder="e.g., Research Article"
                     disabled={submitting}
                   />
@@ -559,11 +587,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                   type="date"
                   value={formData.publish_date}
                   onChange={(e) => handleInputChange("publish_date", e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                    validationErrors.publish_date
-                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.publish_date
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300"
+                    }`}
                   disabled={submitting}
                 />
                 {validationErrors.publish_date && (
@@ -580,11 +607,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                   value={formData.abstract}
                   onChange={(e) => handleInputChange("abstract", e.target.value)}
                   rows={4}
-                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                    validationErrors.abstract
-                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.abstract
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300"
+                    }`}
                   placeholder="Enter paper abstract"
                   disabled={submitting}
                 />
@@ -600,11 +626,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                   value={formData.summary}
                   onChange={(e) => handleInputChange("summary", e.target.value)}
                   rows={4}
-                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                    validationErrors.summary
-                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.summary
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300"
+                    }`}
                   placeholder="Enter paper summary"
                   disabled={submitting}
                 />
@@ -660,11 +685,10 @@ const ManagePapers = ({ onRoleSwitch }) => {
                   type="url"
                   value={formData.pdf_url}
                   onChange={(e) => handleInputChange("pdf_url", e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                    validationErrors.pdf_url
-                      ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                      : "border-gray-300"
-                  }`}
+                  className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ${validationErrors.pdf_url
+                    ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-300"
+                    }`}
                   placeholder="https://example.com/paper.pdf"
                   disabled={submitting}
                 />
@@ -729,5 +753,6 @@ const ManagePapers = ({ onRoleSwitch }) => {
     </div>
   )
 }
+
 
 export default ManagePapers

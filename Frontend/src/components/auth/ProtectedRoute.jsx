@@ -1,9 +1,14 @@
 import PropTypes from 'prop-types';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { Navigate } from 'react-router-dom'; // Add this import
+import { Navigate, useNavigate } from 'react-router-dom'; // Add this import
 
 const ProtectedRoute = ({ children, requiredRole = null }) => {
   const { isAuthenticated, user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const hasAccess = 
+    !requiredRole || 
+    (requiredRole === 'admin' && user?.is_admin);
 
   // Show loading while checking authentication
   if (loading) {
@@ -23,7 +28,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   }
 
   // Check role requirement
-  if (requiredRole === 'admin' && !user?.is_admin) {
+  if (!hasAccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -45,7 +50,7 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
             </div>
             {/* Add a button to redirect back to dashboard */}
             <button 
-              onClick={() => window.location.href = '/dashboard'}
+              onClick={() => navigate('/dashboard')}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
               Go to Dashboard

@@ -1,9 +1,14 @@
 "use client"
 import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "../context/AuthContext.jsx"
-import { Trash2, X, LogOut, BookOpen, RefreshCw, Eye, Download, PlusCircle , Minus, Edit2  } from "lucide-react"
+import { Trash2, X, LogOut, BookOpen, RefreshCw, Eye, Download, PlusCircle, Minus, Edit2 } from "lucide-react"
 import { useNavigate } from "react-router-dom";
+import { showConfirmToast } from "../utils/confirmToast.jsx";
+import { toast } from "react-toastify";
+import Loader from "./Loader/Loader.jsx";
+import ErrorState from "./Loader/NotFound.jsx";
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// const API_BASE_URL = 'http://127.0.0.1:8000';
 
 const PaperAnalytics = () => {
   const { getAuthHeaders, user, logout, token } = useAuth()
@@ -14,15 +19,15 @@ const PaperAnalytics = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [isRefreshing, setIsRefreshing] = useState(false)
   const navigate = useNavigate();
-  const fetchActions = useCallback(async () => {
+  const fetchActions = useCallback(async (showLoader = true) => {
     try {
       setError(null)
-      setLoading(true)
+      if (showLoader) setLoading(true)
 
       const response = await fetch(`${API_BASE_URL}/analytics/paper-actions`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, 
+          Authorization: `Bearer ${token}`,
         },
       })
 
@@ -31,19 +36,20 @@ const PaperAnalytics = () => {
       const data = await response.json()
       setActions(Array.isArray(data) ? data : data.actions || [])
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to fetch actions")
+      setError("Failed to fetch actions")
       setActions([])
     } finally {
-      setLoading(false)
+      if (showLoader) setLoading(false)
     }
   }, [token])
 
 
+
   useEffect(() => {
     fetchActions()
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       setIsRefreshing(true)
-      fetchActions()
+      await fetchActions(false)
       setIsRefreshing(false)
     }, 5000)
     return () => clearInterval(interval)
@@ -52,25 +58,33 @@ const PaperAnalytics = () => {
   const getActionIcon = (action) => {
     switch (action) {
       case "Added":
-        return <PlusCircle  size={24} />;
+        return <PlusCircle size={24} />;
       case "Updated":
         return <Edit2 size={24} />;
       case "Deleted":
-        return <Trash2 size={24}/>;
+        return <Trash2 size={24} />;
       default:
         return null
     }
   }
 
   const handleLogout = async () => {
-    if (window.confirm("Are you sure you want to logout?")) {
-      try {
-        await logout()
-      } catch (error) {
-        console.error("Logout failed:", error)
+    showConfirmToast({
+      title: "Confirm Logout",
+      message: "Are you sure you want to logout?",
+      confirmText: "Logout",
+      confirmColor: "bg-red-600",
+      onConfirm: async () => {
+        try {
+          await logout();
+          toast.success('Logged out successfully');
+          navigate('/login');
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
       }
-    }
-  }
+    })
+  };
 
   const getActionColor = (action) => {
     switch (action) {
@@ -193,7 +207,7 @@ const PaperAnalytics = () => {
             <div className="stats-grid">
               <div className="stat-card green">
                 <div className="flex items-center gap-4">
-                  <div className="stat-icon"><PlusCircle size={24}/></div>
+                  <div className="stat-icon"><PlusCircle size={24} /></div>
                   <div className="stat-content">
                     <div className="stat-number">{stats.added}</div>
                     <div className="stat-label">Added</div>
@@ -203,7 +217,7 @@ const PaperAnalytics = () => {
 
               <div className="stat-card yellow">
                 <div className="flex items-center gap-4">
-                  <div className="stat-icon"><Edit2 size={24}/></div>
+                  <div className="stat-icon"><Edit2 size={24} /></div>
                   <div className="stat-content">
                     <div className="stat-number">{stats.updated}</div>
                     <div className="stat-label">Updated</div>
@@ -213,7 +227,7 @@ const PaperAnalytics = () => {
 
               <div className="stat-card red">
                 <div className="flex items-center gap-4">
-                  <div className="stat-icon"><Trash2 size={24}/></div>
+                  <div className="stat-icon"><Trash2 size={24} /></div>
                   <div className="stat-content">
                     <div className="stat-number">{stats.deleted}</div>
                     <div className="stat-label">Deleted</div>
@@ -227,17 +241,11 @@ const PaperAnalytics = () => {
         {/* Analytics Table Section */}
         <div className="papers-section">
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-slate-400">Loading analytics data...</p>
-            </div>
+            <Loader />
           ) : error ? (
-            <div className="bg-red-900/20 border border-red-800 text-red-400 rounded-lg p-4">
-              <p className="font-semibold">Error: {error}</p>
-            </div>
+            <ErrorState />
           ) : filteredActions.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-slate-400">No paper actions found.</p>
-            </div>
+            <ErrorState />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">

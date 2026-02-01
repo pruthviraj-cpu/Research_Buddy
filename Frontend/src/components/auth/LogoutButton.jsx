@@ -1,29 +1,36 @@
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom'; // Add this import
+import { showConfirmToast } from '../../utils/confirmToast.jsx';
+import { toast } from 'react-toastify';
 
 const LogoutButton = ({ className = "btn-secondary" }) => {
   const { logout, loading } = useAuth();
   const navigate = useNavigate(); // Add this
 
   const handleLogout = async () => {
-    if (window.confirm('Are you sure you want to logout?')) {
-      try {
-        await logout();
-        // Navigate to login page after successful logout
-        navigate('/login');
-      } catch (error) {
-        console.error('Logout failed:', error);
-        alert('Failed to logout. Please try again.');
+    showConfirmToast({
+      title: "Confirm Logout",
+      message: "Are you sure you want to logout?",
+      confirmText: "Logout",
+      confirmColor: "bg-red-600",
+      onConfirm: async () => {
+        try {
+          await logout();
+          toast.success('Logged out successfully');
+          navigate('/login');
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
       }
-    }
+    })
   };
 
   return (
-    <button 
-      onClick={handleLogout} 
+    <button
+      onClick={handleLogout}
       disabled={loading}
       className={className}
-      style={{ 
+      style={{
         opacity: loading ? 0.6 : 1,
         cursor: loading ? 'not-allowed' : 'pointer'
       }}
