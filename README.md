@@ -248,10 +248,6 @@ This project is licensed under the MIT License — feel free to use, modify, and
 
 ---
 
-## 📬 Contact
 
-For questions, feedback, or collaboration inquiries, reach out to **Pruthviraj** at [gawandepruthviraj9@gmail.com](mailto:gawandepruthviraj9@gmail.com).
-
----
 
 <p align="center">Made with ❤️ to make research discovery a little less painful.</p>
